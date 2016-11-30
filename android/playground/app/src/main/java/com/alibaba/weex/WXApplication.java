@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,6 +37,8 @@ import com.alibaba.weex.extend.module.MyModule;
 import com.alibaba.weex.extend.module.RenderModule;
 import com.alibaba.weex.extend.module.SyncTestModule;
 import com.alibaba.weex.extend.module.WXEventModule;
+import com.alibaba.weex.richtext.WXRichText;
+import com.alibaba.weex.richtext.WXRichTextDomObject;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.taobao.weex.InitConfig;
 import com.taobao.weex.WXEnvironment;
@@ -78,7 +80,9 @@ public class WXApplication extends Application {
       WXSDKEngine.registerComponent("synccomponent", WXComponentSyncTest.class);
       WXSDKEngine.registerComponent(WXParallax.PARALLAX, WXParallax.class);
 
-      WXSDKEngine.registerComponent("richtext", RichText.class);
+      String Richtext="richtext";
+      WXSDKEngine.registerComponent(Richtext, WXRichText.class);
+      WXSDKEngine.registerDomObject(Richtext, WXRichTextDomObject.class);
       WXSDKEngine.registerModule("render", RenderModule.class);
       WXSDKEngine.registerModule("event", WXEventModule.class);
       WXSDKEngine.registerModule("syncTest", SyncTestModule.class);
