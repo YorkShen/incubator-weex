@@ -2,6 +2,9 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url  "http://dl.bintray.com/ophio/maven"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.3'
@@ -9,17 +12,20 @@ buildscript {
         classpath files('license/maven-license-plugin-1.10.b1.jar')
         classpath files('license/plexus-utils-3.0.24.jar')
         classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.5.0'
+        classpath 'in.co.ophio:flatbuffer-gradle-plugin:0.1.1'
     }
 }
 
 
 plugins {
     id "com.github.hierynomus.license" version "0.13.1"
+    id "me.tatarka.retrolambda" version "3.5.0"
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'checkstyle'
+apply plugin: 'flatbuffer-gradle-plugin'
 
 ext.disableCov = project.hasProperty('disableCov') ? project.getProperty('disableCov') : 'false'
 if(!disableCov.toBoolean()){
@@ -105,8 +111,8 @@ android {
         abortOnError false
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     testOptions {
         unitTests.all {
@@ -152,6 +158,14 @@ task licenseFormatWeex (type:nl.javadude.gradle.plugins.license.License) {
             excludes: [
             "**/dom/flex/*.java"
             ])
+}
+
+flatbuffer {
+    flatcPath = "/usr/local/bin"
+    inputFileNames = ["weex_dom.fbs"]
+    inputFilePath = "${projectDir}/assets/flatbuffer" // (optional, default location project root
+    // directory)
+    outputDirPath = "${projectDir}/src/main/java"
 }
 
 license{

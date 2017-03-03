@@ -262,7 +262,7 @@ public class WXEnvironment {
 
   public static LogLevel sLogLevel = LogLevel.DEBUG;
   private static boolean isApkDebug = true;
-  public static boolean isPerf = false;
+  public static boolean isPerf = true;
 
   public static boolean sShow3DLayer=true;
 

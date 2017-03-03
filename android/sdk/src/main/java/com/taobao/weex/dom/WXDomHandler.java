@@ -260,7 +260,7 @@ public class WXDomHandler implements Handler.Callback {
         );
         break;
       case MsgType.WX_DOM_ADD_DOM:
-        mWXDomManager.addDom(task.instanceId, (String) task.args.get(0), (JSONObject) task.args.get(1), (Integer) task.args.get(2));
+        mWXDomManager.addDom(task.instanceId, (String) task.args.get(0), (WXDomObject) task.args.get(1), (Integer) task.args.get(2));
         break;
       case MsgType.WX_DOM_REMOVE_DOM:
         mWXDomManager.removeDom(task.instanceId, (String) task.args.get(0));

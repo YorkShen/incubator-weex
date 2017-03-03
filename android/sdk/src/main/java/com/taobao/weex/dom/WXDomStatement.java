@@ -238,6 +238,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.taobao.weex.common.WXErrorCode.WX_ERR_DOM_ADDELEMENT;
+
 /**
  * <p>
  * This class is responsible for creating command object of DOM operation and
@@ -633,6 +635,48 @@ class WXDomStatement {
     addDomInternal(dom,false,parentRef,index);
   }
 
+
+  /**
+   * Create a command object for adding a dom node to its parent in a specific location.
+   * If dom's parent doesn't exist or the dom has been added in current {@link WXSDKInstance},
+   * this method will return.
+   * If the above request is met, then put the command object in the queue.
+   * @param dom the dom object in the form of JSONObject
+   * @param parentRef parent to which the dom is added.
+   * @param index the location of which the dom is added.
+   */
+  void addDom(WXDomObject dom, final String parentRef, final int index) {
+    WXSDKInstance instance;
+    if (dom!=null &&
+        !mDestroy &&
+        (instance=WXSDKManager.getInstance().getSDKInstance(mInstanceId))!=null &&
+        !mRegistry.containsKey(dom.getRef())) {
+      //only non-root has parent.
+      WXDomObject parent;
+      if ((parent = mRegistry.get(parentRef)) == null) {
+        instance.commitUTStab(IWXUserTrackAdapter.DOM_MODULE, WX_ERR_DOM_ADDELEMENT);
+      } else {
+        parent.add(dom, index);
+        dom.traverseTree(mAddDOMConsumer,FlatBufferStyleConsumer.getInstance());
+        //Create component in dom thread
+        WXComponent component = mWXRenderManager.createComponentOnDomThread(mInstanceId, dom, parentRef, index);
+        if (component == null) {
+          instance.commitUTStab(IWXUserTrackAdapter.DOM_MODULE, WX_ERR_DOM_ADDELEMENT);
+        }
+        else {
+          AddDomInfo addDomInfo = new AddDomInfo();
+          addDomInfo.component = component;
+          mAddDom.put(dom.getRef(), addDomInfo);
+          IWXRenderTask task = new AddDOMTask(component, parentRef, index);
+          mNormalTasks.add(task);
+          addAnimationForDomTree(dom);
+          mDirty = true;
+          instance.commitUTStab(IWXUserTrackAdapter.DOM_MODULE, WXErrorCode.WX_SUCCESS);
+        }
+      }
+    }
+  }
+
   private class AddDOMTask implements IWXRenderTask {
     final WXComponent mComponent;
     final String mParentRef;
@@ -781,7 +825,7 @@ class WXDomStatement {
    * @param ref Reference of the dom.
    * @param attrs the new style. This style is only a part of the full attribute set, and will be
    *              merged into attributes
-   * @see #updateStyle(String, JSONObject)
+   * @see #updateStyle(String, JSONObject, boolean)
    */
   void updateAttrs(String ref, final JSONObject attrs) {
     if (mDestroy) {
@@ -1237,6 +1281,36 @@ class WXDomStatement {
       if (dom.getStyles().size() > 0) {
         dom.applyStyleToNode();
       }
+    }
+  }
+
+  static class FlatBufferStyleConsumer implements WXDomObject.Consumer {
+    static FlatBufferStyleConsumer sInstance;
+
+    public static FlatBufferStyleConsumer getInstance(){
+      if(sInstance == null){
+        sInstance = new FlatBufferStyleConsumer();
+      }
+      return sInstance;
+    }
+
+    private FlatBufferStyleConsumer(){};
+
+    @Override
+    public void accept(WXDomObject dom) {
+      WXStyle style = dom.getStyles();
+
+      /** merge default styles **/
+      Map<String, String> defaults = dom.getDefaultStyle();
+      if (defaults != null) {
+        for (Map.Entry<String, String> entry : defaults.entrySet()) {
+          if (!style.containsKey(entry.getKey())) {
+            style.put(entry.getKey(), entry.getValue());
+          }
+        }
+      }
+
+      dom.applyFlatBufferStyleToNode();
     }
   }
 

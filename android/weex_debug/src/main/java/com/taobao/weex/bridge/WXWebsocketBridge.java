@@ -219,6 +219,7 @@ import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.websocket.WXWebSocketManager;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -365,5 +366,16 @@ public class WXWebsocketBridge implements IWXBridge,WXWebSocketManager.JSDebugge
     @Override
     public void onFailure(Throwable cause) {
         Toast.makeText(WXEnvironment.sApplication,"socket connect failure!",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean initFlatBuffer() {
+        //TODO initFlatBuffer
+        return false;
+    }
+
+    @Override
+    public ByteBuffer json2FlatBuffer(String json) {
+        return null;
     }
 }

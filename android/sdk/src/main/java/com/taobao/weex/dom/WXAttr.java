@@ -210,6 +210,7 @@ import android.text.TextUtils;
 
 import com.taobao.weex.common.Constants;
 import com.taobao.weex.common.WXImageSharpen;
+import com.taobao.weex.flatbuffer.model.FlatBufferAttr;
 import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXUtils;
 import com.taobao.weex.utils.WXViewUtils;
@@ -234,6 +235,18 @@ public class WXAttr implements Map<String, Object>,Cloneable {
   public WXAttr(@NonNull Map<String,Object> standardMap) {
     this();
     map.putAll(standardMap);
+  }
+
+  public WXAttr(@NonNull FlatBufferAttr flatBufferAttr){
+    this();
+    String src = flatBufferAttr.src();
+    String value = flatBufferAttr.value();
+    if(!TextUtils.isEmpty(src)){
+      map.put(Constants.Name.SRC, src);
+    }
+    if(!TextUtils.isEmpty(value)){
+      map.put(Constants.Name.VALUE, value);
+    }
   }
 
   public static String getPrefix(Map<String, Object> attr) {

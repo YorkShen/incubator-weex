@@ -314,7 +314,7 @@ public final class WXDomModule extends WXModule {
           if (args == null) {
             return null;
           }
-          addElement((String) args.get(0), (JSONObject) args.get(1), (Integer) args.get(2));
+          addElement((String) args.get(0), (WXDomObject) args.get(1), (Integer) args.get(2));
           break;
         case MOVE_ELEMENT:
           if (args == null) {
@@ -487,7 +487,7 @@ public final class WXDomModule extends WXModule {
    * @param element the node to be added
    * @param index the expected index that the new dom in its new parent
    */
-  public void addElement(String parentRef, JSONObject element, Integer index) {
+  public void addElement(String parentRef, WXDomObject element, Integer index) {
     if (element == null
         || TextUtils.isEmpty(parentRef)) {
       return;

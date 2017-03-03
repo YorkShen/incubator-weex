@@ -202,71 +202,267 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.taobao.weex.utils;
+package com.google.flatbuffers;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
 
-public class WXDataStructureUtil {
+import static com.google.flatbuffers.Constants.FILE_IDENTIFIER_LENGTH;
+import static com.google.flatbuffers.Constants.SIZEOF_INT;
+
+/// @cond FLATBUFFERS_INTERNAL
+
+/**
+ * All tables in the generated code derive from this class, and add their own accessors.
+ */
+public class Table {
+  private final static ThreadLocal<CharsetDecoder> UTF8_DECODER = new ThreadLocal<CharsetDecoder>() {
+    @Override
+    protected CharsetDecoder initialValue() {
+      return Charset.forName("UTF-8").newDecoder();
+    }
+  };
+  public final static ThreadLocal<Charset> UTF8_CHARSET = new ThreadLocal<Charset>() {
+    @Override
+    protected Charset initialValue() {
+      return Charset.forName("UTF-8");
+    }
+  };
+  private final static ThreadLocal<CharBuffer> CHAR_BUFFER = new ThreadLocal<CharBuffer>();
+  /** Used to hold the position of the `bb` buffer. */
+  protected int bb_pos;
+  /** The underlying ByteBuffer to hold the data of the Table. */
+  protected ByteBuffer bb;
 
   /**
-   * The largest power of two that can be represented as an {@code int}.
-   */
-  private static final int MAX_POWER_OF_TWO = 1 << (Integer.SIZE - 2);
-
-  /**
-   * Creates a {@code HashMap} instance, with a high enough "initial capacity" that it <i>should</i>
-   * hold {@code expectedSize} elements without growth. This behavior cannot be broadly guaranteed,
-   * but it is observed to be true for OpenJDK 1.7. It also can't be guaranteed that the method
-   * isn't inadvertently <i>oversizing</i> the returned map.
+   * Get the underlying ByteBuffer.
    *
-   * @param expectedSize the number of entries you expect to add to the returned map
-   * @return a new, empty {@code HashMap} with enough capacity to hold {@code expectedSize} entries
-   * without resizing
-   * @throws IllegalArgumentException if {@code expectedSize} is negative
+   * @return Returns the Table's ByteBuffer.
    */
-  public static <K, V> HashMap<K, V> newHashMapWithExpectedSize(int expectedSize) {
-    return new HashMap<>(capacity(expectedSize));
+  public ByteBuffer getByteBuffer() { return bb; }
+
+  /**
+   * Look up a field in the vtable.
+   *
+   * @param vtable_offset An `int` offset to the vtable in the Table's ByteBuffer.
+   * @return Returns an offset into the object, or `0` if the field is not present.
+   */
+  protected int __offset(int vtable_offset) {
+    int vtable = bb_pos - bb.getInt(bb_pos);
+    return vtable_offset < bb.getShort(vtable) ? bb.getShort(vtable + vtable_offset) : 0;
+  }
+
+  protected static int __offset(int vtable_offset, int offset, ByteBuffer bb) {
+    int vtable = bb.array().length - offset;
+    return bb.getShort(vtable + vtable_offset - bb.getInt(vtable)) + vtable;
   }
 
   /**
-   * Returns a capacity that is sufficient to keep the map from being resized as long as it grows no
-   * larger than expectedSize and the load factor is >= its default (0.75).
+   * Retrieve a relative offset.
+   *
+   * @param offset An `int` index into the Table's ByteBuffer containing the relative offset.
+   * @return Returns the relative offset stored at `offset`.
    */
-  private static int capacity(int expectedSize) {
-    if (expectedSize < 3) {
-      checkNonnegative(expectedSize, "expectedSize");
-      return expectedSize + 1;
-    }
-    if (expectedSize < MAX_POWER_OF_TWO) {
-      // This is the calculation used in JDK8 to resize when a putAll
-      // happens; it seems to be the most conservative calculation we
-      // can make.  0.75 is the default load factor.
-      return (int) ((float) expectedSize / 0.75F + 1.0F);
-    }
-    return Integer.MAX_VALUE; // any large value
+  protected int __indirect(int offset) {
+    return offset + bb.getInt(offset);
   }
 
-  private static int checkNonnegative(int value, String name) {
-    if (value < 0) {
-      throw new IllegalArgumentException(name + " cannot be negative but was: " + value);
-    }
-    return value;
+  protected static int __indirect(int offset, ByteBuffer bb) {
+    return offset + bb.getInt(offset);
   }
 
   /**
-   * Returns a new hash set using the smallest initial table size that can hold {@code expectedSize}
-   * elements without resizing. Note that this is not what {@link HashSet#HashSet(int)} does, but it
-   * is what most users want and expect it to do.
+   * Create a Java `String` from UTF-8 data stored inside the FlatBuffer.
    *
-   * <p>This behavior can't be broadly guaranteed, but has been tested with OpenJDK 1.7 and 1.8.
+   * This allocates a new string and converts to wide chars upon each access,
+   * which is not very efficient. Instead, each FlatBuffer string also comes with an
+   * accessor based on __vector_as_bytebuffer below, which is much more efficient,
+   * assuming your Java program can handle UTF-8 data directly.
    *
-   * @param expectedSize the number of elements you expect to add to the returned set
-   * @return a new, empty hash set with enough capacity to hold {@code expectedSize} elements
-   *     without resizing
-   * @throws IllegalArgumentException if {@code expectedSize} is negative
+   * @param offset An `int` index into the Table's ByteBuffer.
+   * @return Returns a `String` from the data stored inside the FlatBuffer at `offset`.
    */
-  public static <E> HashSet<E> newHashSetWithExpectedSize(int expectedSize) {
-    return new HashSet<E>(capacity(expectedSize));
+  protected String __string(int offset) {
+    CharsetDecoder decoder = UTF8_DECODER.get();
+    decoder.reset();
+
+    offset += bb.getInt(offset);
+    ByteBuffer src = bb.duplicate().order(ByteOrder.LITTLE_ENDIAN);
+    int length = src.getInt(offset);
+    src.position(offset + SIZEOF_INT);
+    src.limit(offset + SIZEOF_INT + length);
+
+    int required = (int)((float)length * decoder.maxCharsPerByte());
+    CharBuffer dst = CHAR_BUFFER.get();
+    if (dst == null || dst.capacity() < required) {
+      dst = CharBuffer.allocate(required);
+      CHAR_BUFFER.set(dst);
+    }
+
+    dst.clear();
+
+    try {
+      CoderResult cr = decoder.decode(src, dst, true);
+      if (!cr.isUnderflow()) {
+        cr.throwException();
+      }
+    } catch (CharacterCodingException x) {
+      throw new Error(x);
+    }
+
+    return dst.flip().toString();
+  }
+
+  /**
+   * Get the length of a vector.
+   *
+   * @param offset An `int` index into the Table's ByteBuffer.
+   * @return Returns the length of the vector whose offset is stored at `offset`.
+   */
+  protected int __vector_len(int offset) {
+    offset += bb_pos;
+    offset += bb.getInt(offset);
+    return bb.getInt(offset);
+  }
+
+  /**
+   * Get the start data of a vector.
+   *
+   * @param offset An `int` index into the Table's ByteBuffer.
+   * @return Returns the start of the vector data whose offset is stored at `offset`.
+   */
+  protected int __vector(int offset) {
+    offset += bb_pos;
+    return offset + bb.getInt(offset) + SIZEOF_INT;  // data starts after the length
+  }
+
+  /**
+   * Get a whole vector as a ByteBuffer.
+   *
+   * This is efficient, since it only allocates a new {@link ByteBuffer} object,
+   * but does not actually copy the data, it still refers to the same bytes
+   * as the original ByteBuffer. Also useful with nested FlatBuffers, etc.
+   *
+   * @param vector_offset The position of the vector in the byte buffer
+   * @param elem_size The size of each element in the array
+   * @return The {@link ByteBuffer} for the array
+   */
+  protected ByteBuffer __vector_as_bytebuffer(int vector_offset, int elem_size) {
+    int o = __offset(vector_offset);
+    if (o == 0) return null;
+    ByteBuffer bb = this.bb.duplicate().order(ByteOrder.LITTLE_ENDIAN);
+    int vectorstart = __vector(o);
+    bb.position(vectorstart);
+    bb.limit(vectorstart + __vector_len(o) * elem_size);
+    return bb;
+  }
+
+  /**
+   * Initialize any Table-derived type to point to the union at the given `offset`.
+   *
+   * @param t A `Table`-derived type that should point to the union at `offset`.
+   * @param offset An `int` index into the Table's ByteBuffer.
+   * @return Returns the Table that points to the union at `offset`.
+   */
+  protected Table __union(Table t, int offset) {
+    offset += bb_pos;
+    t.bb_pos = offset + bb.getInt(offset);
+    t.bb = bb;
+    return t;
+  }
+
+  /**
+   * Check if a {@link ByteBuffer} contains a file identifier.
+   *
+   * @param bb A {@code ByteBuffer} to check if it contains the identifier
+   * `ident`.
+   * @param ident A `String` identifier of the FlatBuffer file.
+   * @return True if the buffer contains the file identifier
+   */
+  protected static boolean __has_identifier(ByteBuffer bb, String ident) {
+    if (ident.length() != FILE_IDENTIFIER_LENGTH)
+        throw new AssertionError("FlatBuffers: file identifier must be length " +
+                                 FILE_IDENTIFIER_LENGTH);
+    for (int i = 0; i < FILE_IDENTIFIER_LENGTH; i++) {
+      if (ident.charAt(i) != (char)bb.get(bb.position() + SIZEOF_INT + i)) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Sort tables by the key.
+   *
+   * @param offsets An 'int' indexes of the tables into the bb.
+   * @param bb A {@code ByteBuffer} to get the tables.
+   */
+  protected void sortTables(int[] offsets, final ByteBuffer bb) {
+    Integer[] off = new Integer[offsets.length];
+    for (int i = 0; i < offsets.length; i++) off[i] = offsets[i];
+    java.util.Arrays.sort(off, new java.util.Comparator<Integer>() {
+      public int compare(Integer o1, Integer o2) {
+        return keysCompare(o1, o2, bb);
+      }
+    });
+    for (int i = 0; i < offsets.length; i++) offsets[i] = off[i];
+  }
+
+  /**
+   * Compare two tables by the key.
+   *
+   * @param o1 An 'Integer' index of the first key into the bb.
+   * @param o2 An 'Integer' index of the second key into the bb.
+   * @param bb A {@code ByteBuffer} to get the keys.
+   */
+  protected int keysCompare(Integer o1, Integer o2, ByteBuffer bb) { return 0; }
+
+  /**
+   * Compare two strings in the buffer.
+   *
+   * @param offset_1 An 'int' index of the first string into the bb.
+   * @param offset_2 An 'int' index of the second string into the bb.
+   * @param bb A {@code ByteBuffer} to get the strings.
+   */
+  protected static int compareStrings(int offset_1, int offset_2, ByteBuffer bb) {
+    offset_1 += bb.getInt(offset_1);
+    offset_2 += bb.getInt(offset_2);
+    int len_1 = bb.getInt(offset_1);
+    int len_2 = bb.getInt(offset_2);
+    int startPos_1 = offset_1 + SIZEOF_INT;
+    int startPos_2 = offset_2 + SIZEOF_INT;
+    int len = Math.min(len_1, len_2);
+    byte[] bbArray = bb.array();
+    for(int i = 0; i < len; i++) {
+      if (bbArray[i + startPos_1] != bbArray[i + startPos_2])
+        return bbArray[i + startPos_1] - bbArray[i + startPos_2];
+    }
+    return len_1 - len_2;
+  }
+
+  /**
+   * Compare string from the buffer with the 'String' object.
+   *
+   * @param offset_1 An 'int' index of the first string into the bb.
+   * @param key Second string as a byte array.
+   * @param bb A {@code ByteBuffer} to get the first string.
+   */
+  protected static int compareStrings(int offset_1, byte[] key, ByteBuffer bb) {
+    offset_1 += bb.getInt(offset_1);
+    int len_1 = bb.getInt(offset_1);
+    int len_2 = key.length;
+    int startPos_1 = offset_1 + Constants.SIZEOF_INT;
+    int len = Math.min(len_1, len_2);
+    byte[] bbArray = bb.array();
+    for (int i = 0; i < len; i++) {
+      if (bbArray[i + startPos_1] != key[i])
+        return bbArray[i + startPos_1] - key[i];
+    }
+    return len_1 - len_2;
   }
 }
+
+/// @endcond

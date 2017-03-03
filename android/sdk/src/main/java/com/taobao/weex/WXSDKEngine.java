@@ -268,6 +268,7 @@ public class WXSDKEngine {
         }
         WXSoInstallMgrSdk.init(application);
         boolean isSoInitSuccess = WXSoInstallMgrSdk.initSo(V8_SO_NAME, 1, config!=null?config.getUtAdapter():null);
+        WXSoInstallMgrSdk.initSo("FlatBuffer2Json", 1, config!=null?config.getUtAdapter():null);
         if (!isSoInitSuccess) {
           return;
         }

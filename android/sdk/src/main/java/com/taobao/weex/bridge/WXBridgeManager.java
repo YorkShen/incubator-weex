@@ -232,6 +232,8 @@ import com.taobao.weex.common.WXRefreshData;
 import com.taobao.weex.common.WXRuntimeException;
 import com.taobao.weex.common.WXThread;
 import com.taobao.weex.dom.WXDomModule;
+import com.taobao.weex.dom.WXDomObject;
+import com.taobao.weex.flatbuffer.model.FlatBufferDom;
 import com.taobao.weex.utils.WXFileUtils;
 import com.taobao.weex.utils.WXHack;
 import com.taobao.weex.utils.WXHack.HackDeclaration.HackAssertionException;
@@ -243,6 +245,9 @@ import com.taobao.weex.utils.WXViewUtils;
 import com.taobao.weex.utils.batch.BactchExecutor;
 import com.taobao.weex.utils.batch.Interceptor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -602,16 +607,14 @@ public class WXBridgeManager implements Callback,BactchExecutor {
       return IWXBridge.DESTROY_INSTANCE;
     }
 
-
-    if (WXSDKManager.getInstance().getSDKInstance(instanceId) != null) {
-      long start = System.currentTimeMillis();
-      JSONObject domObject = JSON.parseObject(dom);
-
-      if (WXSDKManager.getInstance().getSDKInstance(instanceId) != null) {
-        WXSDKManager.getInstance().getSDKInstance(instanceId).jsonParseTime(System.currentTimeMillis() - start);
-      }
+    WXSDKInstance wxsdkInstance;
+    if ((wxsdkInstance=WXSDKManager.getInstance().getSDKInstance(instanceId)) != null) {
+      WXLogUtils.d("FlatBuffer String",dom);
+      ByteBuffer byteBuffer=mWXBridge.json2FlatBuffer(dom);
+      FlatBufferDom flatBufferDom = FlatBufferDom.getRootAsFlatBufferDom(byteBuffer);
+      WXDomObject wxDomObject=WXDomObject.parse(wxsdkInstance, flatBufferDom);
       WXDomModule domModule = getDomModule(instanceId);
-      domModule.addElement(ref, domObject, Integer.parseInt(index));
+      domModule.addElement(ref, wxDomObject, Integer.parseInt(index));
     }
 
     if (UNDEFINED.equals(callback) || NON_CALLBACK.equals(callback)) {
@@ -1024,6 +1027,7 @@ public class WXBridgeManager implements Callback,BactchExecutor {
 
     if(WXUtils.getAvailMemory(WXEnvironment.getApplication()) > LOW_MEM_VALUE) {
       initFramework(framework);
+      mWXBridge.initFlatBuffer();
     }
   }
 

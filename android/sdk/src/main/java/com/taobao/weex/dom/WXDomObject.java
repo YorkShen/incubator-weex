@@ -213,9 +213,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.weex.WXEnvironment;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.common.Constants;
+import com.taobao.weex.dom.flex.CSSAlign;
+import com.taobao.weex.dom.flex.CSSFlexDirection;
+import com.taobao.weex.dom.flex.CSSJustify;
 import com.taobao.weex.dom.flex.CSSLayoutContext;
 import com.taobao.weex.dom.flex.CSSNode;
+import com.taobao.weex.dom.flex.CSSPositionType;
 import com.taobao.weex.dom.flex.Spacing;
+import com.taobao.weex.flatbuffer.model.FlatBufferDom;
+import com.taobao.weex.flatbuffer.model.FlatBufferDomType;
 import com.taobao.weex.ui.component.WXBasicComponentType;
 import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXViewUtils;
@@ -355,7 +361,11 @@ public class WXDomObject extends CSSNode implements Cloneable,ImmutableDomObject
     dest.cssstyle.copy(this.cssstyle);
     dest.mRef = mRef;
     dest.mType = mType;
-    dest.mStyles = mStyles == null ? null : mStyles.clone();//mStyles == null ? null : mStyles.clone();
+    try {
+      dest.mStyles = mStyles == null ? null : mStyles.clone();//mStyles == null ? null : mStyles.clone();
+    } catch (CloneNotSupportedException e) {
+      WXLogUtils.e(TAG, "Error when WXDomObject.copyFields called\n"+WXLogUtils.getStackTrace(e));
+    }
     dest.mAttributes = mAttributes == null ? null : mAttributes.clone();//mAttrs == null ? null : mAttrs.clone();
     dest.mEvents = mEvents == null ? null : mEvents.clone();
     dest.csslayout.copy(this.csslayout);
@@ -715,6 +725,114 @@ public class WXDomObject extends CSSNode implements Cloneable,ImmutableDomObject
     }
   }
 
+  void applyFlatBufferStyleToNode(){
+    WXStyle stylesMap = getStyles();
+    Object oValue;
+    float fValue;
+    if((oValue=stylesMap.getAlignItems())!=null){
+      setAlignItems((CSSAlign) oValue);
+    }
+    if((oValue=stylesMap.getAlignSelf())!=null){
+      setAlignSelf((CSSAlign) oValue);
+    }
+    if((oValue=stylesMap.getFlexDirection())!=null){
+      setFlexDirection((CSSFlexDirection) oValue);
+    }
+    if((oValue=stylesMap.getJustifyContent())!=null){
+      setJustifyContent((CSSJustify) oValue);
+    }
+    if((oValue=stylesMap.getPosition())!=null){
+      setPositionType((CSSPositionType) oValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getFlex())){
+      setFlex(fValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMinWidth())){
+      setMinWidth(fValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMinHeight())){
+      setMinHeight(fValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMaxWidth())){
+      setMaxWidth(fValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMaxHeight())){
+      setMaxHeight(fValue);
+    }
+    if(!Float.isNaN(fValue=stylesMap.getLeft())){
+      setPositionLeft(WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getTop())){
+      setPositionTop(WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getRight())){
+      setPositionRight(WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBottom())){
+      setPositionBottom(WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMargin())){
+      setMargin(Spacing.ALL, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMarginLeft())){
+      setMargin(Spacing.LEFT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMarginTop())){
+      setMargin(Spacing.TOP, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMarginRight())){
+      setMargin(Spacing.RIGHT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getMarginBottom())){
+      setMargin(Spacing.BOTTOM, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBorderWidth())){
+      setBorder(Spacing.ALL, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBorderLeftWidth())){
+      setBorder(Spacing.LEFT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBorderTopWidth())){
+      setBorder(Spacing.TOP, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBorderRightWidth())){
+      setBorder(Spacing.RIGHT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getBorderBottomWidth())){
+      setBorder(Spacing.BOTTOM, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getPadding())){
+      setPadding(Spacing.ALL, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getPaddingLeft())){
+      setPadding(Spacing.LEFT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getPaddingTop())){
+      setPadding(Spacing.TOP, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getPaddingRight())){
+      setPadding(Spacing.RIGHT, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    if(!Float.isNaN(fValue=stylesMap.getPaddingBottom())){
+      setPadding(Spacing.BOTTOM, WXViewUtils.getRealPxByWidth(fValue, getViewPortWidth()));
+    }
+    float height,defaultHeight,width,defaultWidth;
+
+    height=stylesMap.getHeight();
+    defaultHeight=stylesMap.getDefaultHeight();
+    if(!Float.isNaN(height)||!Float.isNaN(defaultHeight)) {
+      setStyleHeight(WXViewUtils.getRealPxByWidth(
+          !Float.isNaN(height)?height:defaultHeight, getViewPortWidth()));
+    }
+
+    width=stylesMap.getWidth();
+    defaultWidth=stylesMap.getDefaultWidth();
+    if(!Float.isNaN(width)||!Float.isNaN(defaultWidth)) {
+      setStyleWidth(WXViewUtils.getRealPxByWidth(
+          !Float.isNaN(width)?width:defaultWidth, getViewPortWidth()));
+    }
+  }
+
   public int childCount() {
     return mDomChildren == null ? 0 : mDomChildren.size();
   }
@@ -829,6 +947,55 @@ public class WXDomObject extends CSSNode implements Cloneable,ImmutableDomObject
       }
 
       return domObject;
+  }
+
+  public static WXDomObject parse(WXSDKInstance wxsdkInstance, FlatBufferDom delegateDom) {
+    String type = parseType(delegateDom.type());
+    WXDomObject domObject = WXDomObjectFactory.newInstance(type);
+    if (domObject != null) {
+      domObject.setViewPortWidth(wxsdkInstance.getViewPortWidth());
+      domObject.mDomContext = wxsdkInstance;
+      domObject.mType = type;
+
+      domObject.mRef = Integer.toString(delegateDom.ref());
+      domObject.mStyles = new WXStyle(delegateDom.style(), wxsdkInstance.getViewPortWidth());
+      domObject.mAttributes = new WXAttr(delegateDom.attr());
+      domObject.mEvents = new WXEvent(delegateDom.eventLength());
+      for (int i = 0; i < delegateDom.eventLength(); i++) {
+        domObject.mEvents.add(delegateDom.event(i));
+      }
+      for (int i = 0; i < delegateDom.childrenLength(); i++) {
+        domObject.add(parse(wxsdkInstance, delegateDom.children(i)), -1);
+      }
+    }
+    return domObject;
+  }
+
+  private static String parseType(byte type){
+    switch (type){
+      case FlatBufferDomType.a:
+        return WXBasicComponentType.A;
+      case FlatBufferDomType.text:
+        return WXBasicComponentType.TEXT;
+      case FlatBufferDomType.container:
+        return WXBasicComponentType.CONTAINER;
+      case FlatBufferDomType.header:
+        return WXBasicComponentType.HEADER;
+      case FlatBufferDomType.footer:
+        return WXBasicComponentType.FOOTER;
+      case FlatBufferDomType.image:
+        return WXBasicComponentType.IMAGE;
+      case FlatBufferDomType.img:
+        return WXBasicComponentType.IMG;
+      case FlatBufferDomType.scroller:
+        return WXBasicComponentType.SCROLLER;
+      case FlatBufferDomType.list:
+        return WXBasicComponentType.LIST;
+      case FlatBufferDomType.cell:
+        return WXBasicComponentType.CELL;
+      default:
+        return WXBasicComponentType.DIV;
+    }
   }
 
   interface Consumer{

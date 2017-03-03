@@ -350,7 +350,7 @@ public final class WXDomManager {
    * @param parentRef parent to which the dom is added.
    * @param index the location of which the dom is added.
    */
-  void addDom(String instanceId, String parentRef, JSONObject element, int index) {
+  void addDom(String instanceId, String parentRef, WXDomObject element, int index) {
     throwIfNotDomThread();
     WXDomStatement statement = mDomRegistries.get(instanceId);
     if (statement == null) {

@@ -204,18 +204,118 @@
  */
 package com.taobao.weex.dom;
 
+import android.support.annotation.NonNull;
+
+import com.taobao.weex.utils.WXDataStructureUtil;
+
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Store value of component event
  */
-public class WXEvent extends ArrayList<String> implements Serializable, Cloneable {
+public class WXEvent implements Serializable, Cloneable, Collection<String> {
 
   private static final long serialVersionUID = -8186587029452440107L;
 
+  private final Set<String> mSet;
+
+  public WXEvent() {
+    mSet = new HashSet<>();
+  }
+
+  WXEvent(int expectedSize){
+    mSet = WXDataStructureUtil.newHashSetWithExpectedSize(expectedSize);
+  }
+
+  WXEvent(Set<String> set) {
+    this();
+    mSet.addAll(set);
+  }
+
+  @Override
+  public boolean add(String object) {
+    return mSet.add(object);
+  }
+
+  @Override
+  public boolean addAll(Collection<? extends String> collection) {
+    return mSet.addAll(collection);
+  }
+
+  @Override
+  public void clear() {
+    mSet.clear();
+  }
+
+  @Override
+  public boolean contains(Object object) {
+    return mSet.contains(object);
+  }
+
+  @Override
+  public boolean containsAll(Collection<?> collection) {
+    return mSet.containsAll(collection);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    return mSet.equals(object);
+  }
+
+  @Override
+  public int hashCode() {
+    return mSet.hashCode();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return mSet.isEmpty();
+  }
+
+  @NonNull
+  @Override
+  public Iterator<String> iterator() {
+    return mSet.iterator();
+  }
+
+  @Override
+  public boolean remove(Object object) {
+    return mSet.remove(object);
+  }
+
+  @Override
+  public boolean removeAll(Collection<?> collection) {
+    return mSet.removeAll(collection);
+  }
+
+  @Override
+  public boolean retainAll(Collection<?> collection) {
+    return mSet.retainAll(collection);
+  }
+
+  @Override
+  public int size() {
+    return mSet.size();
+  }
+
+  @NonNull
+  @Override
+  public Object[] toArray() {
+    return mSet.toArray();
+  }
+
+  @NonNull
+  @Override
+  public <T> T[] toArray(T[] array) {
+    return mSet.toArray(array);
+  }
+
   @Override
   public WXEvent clone() {
-    return (WXEvent) super.clone();
+    return new WXEvent(mSet);
   }
 }

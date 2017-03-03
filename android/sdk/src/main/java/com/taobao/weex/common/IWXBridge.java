@@ -207,6 +207,8 @@ package com.taobao.weex.common;
 import com.taobao.weex.bridge.WXJSObject;
 import com.taobao.weex.bridge.WXParams;
 
+import java.nio.ByteBuffer;
+
 /**
  * Bridge interface, native bridge and debug bridge both need to implement this interface
  */
@@ -244,4 +246,8 @@ public interface IWXBridge extends IWXObject {
   Object callNativeModule(String instanceId, String module, String method,  byte [] arguments,  byte [] options);
 
   void callNativeComponent(String instanceId, String componentRef, String method,  byte [] arguments,  byte [] options);
+
+  boolean initFlatBuffer();
+
+  ByteBuffer json2FlatBuffer(String json);
 }

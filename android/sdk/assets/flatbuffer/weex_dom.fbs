@@ -1,0 +1,206 @@
+namespace com.taobao.weex.flatbuffer.model;
+
+/*
+enum CssAlign : byte {
+  auto,
+  flexStart,
+  center,
+  flexEnd,
+  stretch
+}
+*/
+
+enum FlatBufferFlexDirection : byte {
+  unset=-1,
+  column,
+  row,
+}
+
+enum FlatBufferBorderStyle : byte{
+  unset =-1,
+  solid,
+  dashed,
+  dotted
+}
+
+enum FlatBufferPosition : byte {
+  unset =-1,
+  relative,
+  sticky,
+  absolute,
+  fixed
+}
+
+enum FlatBufferFontStyle : byte {
+  unset =-1,
+  normal,
+  italic
+}
+
+enum FlatBufferTextOverflow : byte {
+  unset =-1,
+  clip,
+  ellipsis
+}
+
+enum FlatBufferOverFlow : byte {
+  unset =-1,
+  visible,
+  hidden
+}
+
+enum FlatBufferDomType: byte{
+  unset =-1,
+  text,
+  container,
+  div,
+  header,
+  footer,
+  image,
+  img,
+  scroller,
+  simplelist,
+  list,
+  vlist,
+  hlist,
+  cell,
+  indicator,
+  video,
+  input,
+  textarea,
+  a,
+  embed,
+  web,
+  refresh,
+  loading,
+}
+
+table FlatBufferDom {
+  type:FlatBufferDomType;
+  ref:int;
+  style:FlatBufferStyle;
+  attr:FlatBufferAttr;
+  event:[string];
+  children:[FlatBufferDom];
+}
+
+table FlatBufferStyle{
+  width:int = -2147483648;
+  height:int = -2147483648;
+  minWidth:int = -2147483648;
+  maxWidth:int = -2147483648;
+  minHeight:int = -2147483648;
+  maxHeight:int = -2147483648;
+  defaultWidth:int = -2147483648;
+  defaultHeight:int = -2147483648;
+  alignItems:string;
+  alignSelf:string;
+  flex:float = -10000;
+  flexDirection:FlatBufferFlexDirection = unset;
+  justifyContent:string;
+  flexWrap:string;
+  backgroundColor:string;
+  opacity:float = -10000;
+  borderRadius:int = -2147483648;
+  borderWidth:int = -2147483648;
+  borderColor:string;
+  borderStyle:FlatBufferBorderStyle = unset;
+  borderTopWidth:int = -2147483648;
+  borderRightWidth:int = -2147483648;
+  borderBottomWidth:int = -2147483648;
+  borderLeftWidth:int = -2147483648;
+  borderTopColor:string;
+  borderRightColor:string;
+  borderBottomColor:string;
+  borderLeftColor:string;
+  borderTopLeftRadius:int = -2147483648;
+  borderTopRightRadius:int = -2147483648;
+  borderBottomRightRadius:int = -2147483648;
+  borderBottomLeftRadius:int = -2147483648;
+  borderRightStyle:FlatBufferBorderStyle = unset;
+  borderBottomStyle:FlatBufferBorderStyle = unset;
+  borderLeftStyle:FlatBufferBorderStyle = unset;
+  borderTopStyle:FlatBufferBorderStyle = unset;
+  margin:int = -2147483648;
+  marginTop:int = -2147483648;
+  marginLeft:int = -2147483648;
+  marginRight:int = -2147483648;
+  marginBottom:int = -2147483648;
+  padding:int = -2147483648;
+  paddingTop:int = -2147483648;
+  paddingLeft:int = -2147483648;
+  paddingRight:int = -2147483648;
+  paddingBottom:int = -2147483648;
+  position:FlatBufferPosition = unset;
+  left:int = -2147483648;
+  top:int = -2147483648;
+  right:int = -2147483648;
+  bottom:int = -2147483648;
+  textDecoration:string;
+  textAlign:string;
+  fontWeight:string;
+  fontStyle:FlatBufferFontStyle = unset;
+  fontSize:int = -2147483648;
+  color:string;
+  lines:int = -2147483648;
+  lineHeight:int = -2147483648;
+  fontFamily:string;
+  textOverflow:FlatBufferTextOverflow = unset;
+  transformOrigin:string;
+  transform:string;
+  overflow:FlatBufferOverFlow = -1;
+  filter:string;
+  /*干掉下面这些
+  display:string;
+  MsFlexAlign:string;
+  WebkitAlignItems:string;
+  WebkitBoxAlign:string;
+  */
+}
+
+table FlatBufferAttr {
+  disabled:bool;
+  prefix:string;
+  imageQuality:string;
+  src:string;
+  placeHolder:string;
+  placeholderColor:string;
+  value:string;
+  quality:string;
+  resizeMode:string;
+  showIndicators:string;
+  autoPlay:string;
+  showScrollbar:string;
+  scrollDirection:string;
+  scope:int;
+  loadmoreretry:string;
+  loadmoreoffset:string;
+  recycleImage:string;
+  overflow:string;
+  autofocus:bool;
+  singleline:string;
+  maxLength:string;
+  rows:string;
+  checked:string;
+  visibility:string;
+  itemColor:string;
+  itemSelectedColor:string;
+  itemSize:string;
+  display:string;
+  suffix:string;
+  resize:string;
+  imageSharpen:string;
+  sharpen:string;
+  index:int;
+  interval:int;
+  playStatus:string;
+  append:string;
+  placeholder:string;
+  type:string;
+  min:string;
+  max:string;
+  composite:string;
+  rownumber:int;
+}
+
+root_type FlatBufferDom;

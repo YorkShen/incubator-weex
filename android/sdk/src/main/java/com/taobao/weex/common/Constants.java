@@ -380,6 +380,8 @@ public class Constants {
     String DIRECTION_RIGHT = "right";
     String DIRECTION_UP = "up";
     String DIRECTION_DOWN = "down";
+    String UNDERLINE="underline";
+    String LINETHROUGH="line-through";
   }
 
   public interface Event {

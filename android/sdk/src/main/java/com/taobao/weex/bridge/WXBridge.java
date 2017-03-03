@@ -212,8 +212,12 @@ import com.taobao.weex.WXEnvironment;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.WXSDKManager;
 import com.taobao.weex.common.IWXBridge;
-import com.taobao.weex.utils.WXJsonUtils;
+import com.taobao.weex.flatbuffer.FlatBuffersParser;
+import com.taobao.weex.utils.WXFileUtils;
 import com.taobao.weex.utils.WXLogUtils;
+
+import java.nio.ByteBuffer;
+
 
 /**
  * Communication interface for Java code and JavaScript code.
@@ -221,6 +225,7 @@ import com.taobao.weex.utils.WXLogUtils;
 class WXBridge implements IWXBridge {
 
   public static final String TAG = "WXBridge";
+  private FlatBuffersParser flatBuffersParser;
 
   /**
    * Init JSFrameWork
@@ -376,5 +381,17 @@ class WXBridge implements IWXBridge {
     if(!TextUtils.isEmpty(version)) {
       WXEnvironment.JS_LIB_SDK_VERSION = version;
     }
+  }
+
+  @Override
+  public boolean initFlatBuffer() {
+    String schema = WXFileUtils.loadAsset("flatbuffer/weex_dom.fbs", WXEnvironment.getApplication());
+    flatBuffersParser = new FlatBuffersParser(schema);
+    return flatBuffersParser.isInit();
+  }
+
+  @Override
+  public ByteBuffer json2FlatBuffer(String json) {
+    return flatBuffersParser.parseJson(json);
   }
 }

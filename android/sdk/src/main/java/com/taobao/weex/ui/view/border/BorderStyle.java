@@ -212,7 +212,7 @@ import android.support.annotation.Nullable;
 
 import com.taobao.weex.dom.flex.Spacing;
 
-enum BorderStyle {
+public enum BorderStyle {
   SOLID,
   DASHED,
   DOTTED;

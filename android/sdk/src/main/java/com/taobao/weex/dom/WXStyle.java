@@ -204,8 +204,14 @@
  */
 package com.taobao.weex.dom;
 
+import com.google.flatbuffers.FlatBufferBuilder;
+
 import android.graphics.Typeface;
+import android.support.annotation.IntDef;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.util.ArrayMap;
 import android.text.Layout;
 import android.text.TextUtils;
@@ -216,518 +222,532 @@ import com.taobao.weex.dom.flex.CSSFlexDirection;
 import com.taobao.weex.dom.flex.CSSJustify;
 import com.taobao.weex.dom.flex.CSSPositionType;
 import com.taobao.weex.dom.flex.CSSWrap;
+import com.taobao.weex.dom.flex.FloatUtil;
+import com.taobao.weex.flatbuffer.model.FlatBufferBorderStyle;
+import com.taobao.weex.flatbuffer.model.FlatBufferFlexDirection;
+import com.taobao.weex.flatbuffer.model.FlatBufferFontStyle;
+import com.taobao.weex.flatbuffer.model.FlatBufferOverFlow;
+import com.taobao.weex.flatbuffer.model.FlatBufferPosition;
+import com.taobao.weex.flatbuffer.model.FlatBufferStyle;
+import com.taobao.weex.flatbuffer.model.FlatBufferTextOverflow;
 import com.taobao.weex.ui.component.WXText;
 import com.taobao.weex.ui.component.WXTextDecoration;
+import com.taobao.weex.ui.view.border.BorderStyle;
+import com.taobao.weex.utils.WXDataStructureUtil;
 import com.taobao.weex.utils.WXUtils;
 import com.taobao.weex.utils.WXViewUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import static com.taobao.weex.utils.WXViewUtils.getRealPxByWidth;
+
 /**
  * Store value of component style
  *
  */
-public class WXStyle implements Map<String, Object>,Cloneable {
+public class WXStyle implements Map<String, Object>, Cloneable {
+
+  @Retention(RetentionPolicy.SOURCE)
+  @IntDef({Typeface.NORMAL, Typeface.BOLD})
+  private @interface FontWeight {
+
+  }
+
+  @Retention(RetentionPolicy.SOURCE)
+  @IntDef({Typeface.NORMAL, Typeface.ITALIC})
+  private @interface FontStyle {
+
+  }
+
+  @Retention(RetentionPolicy.SOURCE)
+  @StringDef({Constants.Value.VISIBLE, Constants.Value.HIDDEN})
+  private @interface Overflow {
+
+  }
+
+  private interface String2Generic<T> {
+
+    T convert(String raw);
+  }
+
+  private interface Byte2Generic<T> {
+
+    T convert(byte raw);
+  }
+
+  private interface String2Int {
+
+    int convert(String raw);
+  }
+
+  private interface Byte2Int {
+
+    int convert(Byte raw);
+  }
+
+  private interface AddField2Set<T> {
+
+    boolean add(Set<T> set, String field);
+  }
+
+  private static class FlatEntry implements Entry<String, Object> {
+
+    String key;
+    Object value;
+
+    FlatEntry(String key, Object value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    @Override
+    public String getKey() {
+      return key;
+    }
+
+    @Override
+    public Object getValue() {
+      return value;
+    }
+
+    @Override
+    public Object setValue(Object object) {
+      throw new UnsupportedOperationException("WXStyle.entrySet don't support setValue");
+    }
+  }
 
   private static final long serialVersionUID = 611132641365274134L;
+  private static final int INT_UNDEFINE = -2147483648;
+  private static final float FLOAT_UNDEFINE = -10000;
+  private static final byte BYTE_ENUM_UNDEFINE = -1;
+  private static final Collection<String> FLAT_BUFFER_STYLES = Arrays.asList(
+      Constants.Name.ALIGN_ITEMS,
+      Constants.Name.ALIGN_SELF,
+      Constants.Name.FLEX,
+      Constants.Name.FLEX_DIRECTION,
+      Constants.Name.JUSTIFY_CONTENT,
+      Constants.Name.FLEX_WRAP,
+      Constants.Name.TEXT_DECORATION,
+      Constants.Name.COLOR,
+      Constants.Name.FONT_WEIGHT,
+      Constants.Name.FONT_STYLE,
+      Constants.Name.FONT_SIZE,
+      Constants.Name.FONT_FAMILY,
+      Constants.Name.TEXT_ALIGN,
+      Constants.Name.TEXT_OVERFLOW,
+      Constants.Name.LINES,
+      Constants.Name.LINE_HEIGHT,
+      Constants.Name.WIDTH,
+      Constants.Name.DEFAULT_WIDTH,
+      Constants.Name.MIN_WIDTH,
+      Constants.Name.MAX_WIDTH,
+      Constants.Name.HEIGHT,
+      Constants.Name.DEFAULT_HEIGHT,
+      Constants.Name.MIN_HEIGHT,
+      Constants.Name.MAX_HEIGHT,
+      Constants.Name.BORDER_TOP_WIDTH,
+      Constants.Name.BORDER_RIGHT_WIDTH,
+      Constants.Name.BORDER_BOTTOM_WIDTH,
+      Constants.Name.BORDER_LEFT_WIDTH,
+      Constants.Name.BORDER_RADIUS,
+      Constants.Name.BORDER_TOP_LEFT_RADIUS,
+      Constants.Name.BORDER_TOP_RIGHT_RADIUS,
+      Constants.Name.BORDER_BOTTOM_RIGHT_RADIUS,
+      Constants.Name.BORDER_BOTTOM_LEFT_RADIUS,
+      Constants.Name.BORDER_COLOR,
+      Constants.Name.BORDER_TOP_COLOR,
+      Constants.Name.BORDER_RIGHT_COLOR,
+      Constants.Name.BORDER_BOTTOM_COLOR,
+      Constants.Name.BORDER_LEFT_COLOR,
+      Constants.Name.BORDER_STYLE,
+      Constants.Name.BORDER_TOP_STYLE,
+      Constants.Name.BORDER_RIGHT_STYLE,
+      Constants.Name.BORDER_BOTTOM_STYLE,
+      Constants.Name.BORDER_LEFT_STYLE,
+      Constants.Name.MARGIN,
+      Constants.Name.MARGIN_TOP,
+      Constants.Name.MARGIN_RIGHT,
+      Constants.Name.MARGIN_BOTTOM,
+      Constants.Name.MARGIN_LEFT,
+      Constants.Name.PADDING,
+      Constants.Name.PADDING_TOP,
+      Constants.Name.PADDING_RIGHT,
+      Constants.Name.PADDING_BOTTOM,
+      Constants.Name.PADDING_LEFT,
+      Constants.Name.POSITION,
+      Constants.Name.TOP,
+      Constants.Name.RIGHT,
+      Constants.Name.BOTTOM,
+      Constants.Name.LEFT,
+      Constants.Name.BACKGROUND_COLOR,
+      Constants.Name.OPACITY,
+      Constants.Name.FILTER,
+      Constants.Name.OVERFLOW);
+  private static FlatBufferStyle DEFAULT_STYLE_FLAT_BUFFER;
   public static final int UNSET = -1;
 
-  private @NonNull final Map<String,Object> map;
-  private Map<String,Map<String,Object>> mPesudoStyleMap = new ArrayMap<>();// clz_group:{styleMap}
-  private Map<String,Object> mPesudoResetStyleMap = new ArrayMap<>();
+  private
+  @NonNull
+  FlatBufferStyle flatBufferStyle;
+  private
+  @NonNull
+  Map<String, Object> mutationStyle;
+  private Map<String, Map<String, Object>> mPesudoStyleMap = new ArrayMap<>();// clz_group:{styleMap}
+  private Map<String, Object> mPesudoResetStyleMap = new ArrayMap<>();
 
-
-  public WXStyle(){
-    map = new ArrayMap<>();
+  WXStyle() {
+    mutationStyle = new ArrayMap<>();
+    if (DEFAULT_STYLE_FLAT_BUFFER == null) {
+      FlatBufferBuilder builder = new FlatBufferBuilder(8);
+      FlatBufferStyle.startFlatBufferStyle(builder);
+      int end = FlatBufferStyle.endFlatBufferStyle(builder);
+      builder.finish(end);
+      ByteBuffer byteBuffer = builder.dataBuffer();
+      DEFAULT_STYLE_FLAT_BUFFER = FlatBufferStyle.getRootAsFlatBufferStyle(byteBuffer);
+    }
+    flatBufferStyle = DEFAULT_STYLE_FLAT_BUFFER;
   }
 
-  public int getBlur() {
-    try {
-      if(get(Constants.Name.FILTER) == null) {
-        return 0;
-      }
-      String value = get(Constants.Name.FILTER).toString().trim();
-      int start = value.indexOf("blur(");
-      int end = value.indexOf("px)");
-      if(end == -1) {
-        end = value.indexOf(")");
-      }
-      if(start == 0 && start < end) {
-        int blur = Integer.parseInt(value.substring(5,end));
-        //unlike css blur filter(https://developer.mozilla.org/en-US/docs/Web/CSS/filter),in weex
-        //we specify the blur radius in [0,10] to improve performance and avoid potential oom issue.
-        return Math.min(10,Math.max(0,blur));
-      }
-    }catch (NumberFormatException e) {
-    }
-    return 0;
+  WXStyle(@NonNull FlatBufferStyle flatBufferStyle, int viewPortWidth) {
+    this();
+    this.flatBufferStyle = flatBufferStyle;
   }
 
-  /*
-   * text-decoration
-   **/
-  public static WXTextDecoration getTextDecoration(Map<String, Object> style) {
-    Object obj = style.get(Constants.Name.TEXT_DECORATION);
-    if (obj == null) {
-      return WXTextDecoration.NONE;
-    }
-    String textDecoration = obj.toString();
-    if (textDecoration.equals("underline")) {
-      return WXTextDecoration.UNDERLINE;
-    }
-    if (textDecoration.equals("line-through")) {
-      return WXTextDecoration.LINETHROUGH;
-    }
-    return WXTextDecoration.NONE;
-  }
-
-  public static String getTextColor(Map<String, Object> style) {
-    if (style == null) {
-      return "";
-    }
-    Object temp = style.get(Constants.Name.COLOR);
-    return temp == null ? "" : temp.toString();
-  }
-
-  public static int getFontWeight(Map<String, Object> style) {
-    int typeface = android.graphics.Typeface.NORMAL;
-    if (style != null) {
-      Object temp = style.get(Constants.Name.FONT_WEIGHT);
-      if (temp != null) {
-        String fontWeight = temp.toString();
-        switch (fontWeight){
-          case "600":
-          case "700":
-          case "800":
-          case "900":
-          case Constants.Value.BOLD:
-            typeface=Typeface.BOLD;
-            break;
-        }
-      }
-    }
-    return typeface;
-  }
-
-  public static int getFontStyle(Map<String, Object> style) {
-    int typeface = android.graphics.Typeface.NORMAL;
-    if (style == null) {
-      return typeface;
-    }
-    Object temp = style.get(Constants.Name.FONT_STYLE);
-    if (temp == null) {
-      return typeface;
-    }
-    String fontWeight = temp.toString();
-    if (fontWeight.equals(Constants.Value.ITALIC)) {
-      typeface = android.graphics.Typeface.ITALIC;
-    }
-    return typeface;
-  }
-
-  public static int getFontSize(Map<String, Object> style,int viewPortW) {
-    if (style == null) {
-      return (int) WXViewUtils.getRealPxByWidth(WXText.sDEFAULT_SIZE,viewPortW);
-    }
-    int fontSize = WXUtils.getInt(style.get(Constants.Name.FONT_SIZE));
-    if (fontSize <= 0) {
-      fontSize = WXText.sDEFAULT_SIZE;
-    }
-    return (int) WXViewUtils.getRealPxByWidth(fontSize,viewPortW);
-  }
-
-  public static String getFontFamily(Map<String, Object> style) {
-    String fontFamily = null;
-    if (style != null) {
-      Object temp;
-      temp = style.get(Constants.Name.FONT_FAMILY);
-      if (temp != null) {
-        fontFamily = temp.toString();
-      }
-    }
-    return fontFamily;
-  }
-
-  public static Layout.Alignment getTextAlignment(Map<String, Object> style){
-    Layout.Alignment alignment= Layout.Alignment.ALIGN_NORMAL;
-    String textAlign= (String) style.get(Constants.Name.TEXT_ALIGN);
-    if(TextUtils.equals(Constants.Value.LEFT,textAlign)){
-      alignment= Layout.Alignment.ALIGN_NORMAL;
-    }
-    else if(TextUtils.equals(Constants.Value.CENTER,textAlign)){
-      alignment=Layout.Alignment.ALIGN_CENTER;
-    }
-    else if(TextUtils.equals(Constants.Value.RIGHT,textAlign)){
-      alignment= Layout.Alignment.ALIGN_OPPOSITE;
-    }
-    return alignment;
-  }
-
-  public static TextUtils.TruncateAt getTextOverflow(Map<String, Object> style){
-    TextUtils.TruncateAt truncateAt=null;
-    String ellipse = (String) style.get(Constants.Name.TEXT_OVERFLOW);
-    if(TextUtils.equals(Constants.Name.ELLIPSIS,ellipse)){
-      truncateAt = TextUtils.TruncateAt.END;
-    }
-    return truncateAt;
-  }
-
-  public static int getLines(Map<String, Object> style) {
-    return WXUtils.getInt(style.get(Constants.Name.LINES));
-  }
-
-  public static int getLineHeight(Map<String, Object> style,int viewPortW){
-    if (style == null) {
-      return UNSET;
-    }
-    int lineHeight = WXUtils.getInt(style.get(Constants.Name.LINE_HEIGHT));
-    if (lineHeight <= 0) {
-      lineHeight = UNSET;
-      return lineHeight;
-    }
-    return (int) WXViewUtils.getRealPxByWidth(lineHeight,viewPortW);
-  }
   /*
    * flexbox
    **/
-  public CSSAlign getAlignItems() {
-    Object alignItems = get(Constants.Name.ALIGN_ITEMS);
-    if (alignItems == null) {
-      return CSSAlign.STRETCH;
-    }
-    return CSSAlignConvert.convert2AlignItems(alignItems.toString().trim());
+  public
+  @Nullable
+  CSSAlign getAlignItems() {
+    return getField(flatBufferStyle.alignItems(), CSSAlignConvert::convert2AlignItems);
   }
 
-  public CSSAlign getAlignSelf() {
-    Object alignSelf = get(Constants.Name.ALIGN_SELF);
-    if (alignSelf == null) {
-      return CSSAlign.AUTO;
-    }
-    return CSSAlignConvert.convert2AlignSelf(alignSelf.toString().trim());
+  public
+  @Nullable
+  CSSAlign getAlignSelf() {
+    return getField(flatBufferStyle.alignSelf(), CSSAlignConvert::convert2AlignSelf);
   }
 
   public float getFlex() {
-    return WXUtils.getFloat(get(Constants.Name.FLEX));
+    return getField(flatBufferStyle.flex());
   }
 
-  public CSSFlexDirection getFlexDirection() {
-    Object flexDirection = get(Constants.Name.FLEX_DIRECTION);
-    if (flexDirection == null) {
-      return CSSFlexDirection.COLUMN;
-    }
-    return CSSFlexDirectionConvert.convert(flexDirection.toString().trim());
+  public
+  @Nullable
+  CSSFlexDirection getFlexDirection() {
+    return getField(flatBufferStyle.flexDirection(), WXStyle::parseFlexDirection);
   }
 
-  public CSSJustify getJustifyContent() {
-    Object justifyContent = get(Constants.Name.JUSTIFY_CONTENT);
-    if (justifyContent == null) {
-      return CSSJustify.FLEX_START;
-    }
-    return CSSJustifyConvert.convert(justifyContent.toString().trim());
+  public
+  @Nullable
+  CSSJustify getJustifyContent() {
+    return getField(flatBufferStyle.justifyContent(), CSSJustifyConvert::convert);
   }
 
-  public CSSWrap getCSSWrap() {
-    Object cssWrap = get(Constants.Name.FLEX_WRAP);
-    if (cssWrap == null) {
-      return CSSWrap.NOWRAP;
-    }
-    return CSSWrapConvert.convert(cssWrap.toString().trim());
+  public
+  @Nullable
+  CSSWrap getCSSWrap() {
+    return getField(flatBufferStyle.flexWrap(), CSSWrapConvert::convert);
+  }
+
+  public
+  @Nullable
+  WXTextDecoration getTextDecoration() {
+    return getField(flatBufferStyle.textDecoration(), WXStyle::parseTextDecoration);
+  }
+
+  public
+  @Nullable
+  String getColor() {
+    return flatBufferStyle.color();
+  }
+
+  public int getFontWeight() {
+    return getField(flatBufferStyle.fontWeight(), WXStyle::parseFontWeight);
+  }
+
+  public int getFontStyle() {
+    return getField(flatBufferStyle.fontStyle(), (Byte2Int) WXStyle::parseFontStyle);
+  }
+
+  //TODO 考虑ViewPort？
+  public int getFontSize() {
+    return getIntField(flatBufferStyle.fontSize());
+  }
+
+  public
+  @Nullable
+  String getFontFamily() {
+    return flatBufferStyle.fontFamily();
+  }
+
+  public
+  @Nullable
+  Layout.Alignment getTextAlignment() {
+    return getField(flatBufferStyle.textAlign(), WXStyle::parseTextAlignment);
+  }
+
+  public
+  @Nullable
+  TextUtils.TruncateAt getTextOverflow() {
+    return getField(flatBufferStyle.textOverflow(), WXStyle::parseTextOverflow);
+  }
+
+  //TODO getIntField换个重载函数名
+  public int getLines() {
+    return getIntField(flatBufferStyle.lines());
+  }
+
+  //TODO 考虑ViewPort？
+  public int getLineHeight() {
+    return getIntField(flatBufferStyle.lineHeight());
   }
 
   /*
    * base
    **/
   public float getWidth() {
-    return WXUtils.getFloat(get(Constants.Name.WIDTH));
+    return getField(flatBufferStyle.width());
   }
 
   public float getDefaultWidth() {
-    return WXUtils.getFloat(get(Constants.Name.DEFAULT_WIDTH));
+    return getField(flatBufferStyle.defaultWidth());
   }
 
   public float getMinWidth() {
-    return WXUtils.getFloat(get(Constants.Name.MIN_WIDTH));
+    return getField(flatBufferStyle.minWidth());
   }
 
   public float getMaxWidth() {
-    return WXUtils.getFloat(get(Constants.Name.MAX_WIDTH));
+    return getField(flatBufferStyle.maxWidth());
   }
 
   public float getHeight() {
-    return WXUtils.getFloat(get(Constants.Name.HEIGHT));
+    return getField(flatBufferStyle.height());
   }
 
   public float getDefaultHeight() {
-    return WXUtils.getFloat(get(Constants.Name.DEFAULT_HEIGHT));
+    return getField(flatBufferStyle.defaultHeight());
   }
 
   public float getMinHeight() {
-    return WXUtils.getFloat(get(Constants.Name.MIN_HEIGHT));
+    return getField(flatBufferStyle.minHeight());
   }
 
   public float getMaxHeight() {
-    return WXUtils.getFloat(get(Constants.Name.MAX_HEIGHT));
+    return getField(flatBufferStyle.maxHeight());
   }
 
   /*
    * border
    **/
-  public float getBorderRadius() {
-    float temp = WXUtils.getFloat(get(Constants.Name.BORDER_RADIUS));
-    if (WXUtils.isUndefined(temp)) {
-      return Float.NaN;
-    }
-    return temp;
+
+  public float getBorderWidth() {
+    return getField(flatBufferStyle.borderWidth());
   }
 
   public float getBorderTopWidth() {
-    return getBorderWidth(Constants.Name.BORDER_TOP_WIDTH);
-  }
-
-  private float getBorderWidth(String key) {
-    float temp = WXUtils.getFloat(get(key));
-    if (WXUtils.isUndefined(temp)) {
-      return getBorderWidth();
-    }
-    return temp;
-  }
-
-  //TODO fix : only when set backgroundColor
-  public float getBorderWidth() {
-    return WXUtils.getFloat(get(Constants.Name.BORDER_WIDTH));
+    return getField(flatBufferStyle.borderTopWidth());
   }
 
   public float getBorderRightWidth() {
-    return getBorderWidth(Constants.Name.BORDER_RIGHT_WIDTH);
+    return getField(flatBufferStyle.borderRightWidth());
   }
 
   public float getBorderBottomWidth() {
-    return getBorderWidth(Constants.Name.BORDER_BOTTOM_WIDTH);
+    return getField(flatBufferStyle.borderBottomWidth());
   }
 
   public float getBorderLeftWidth() {
-    return getBorderWidth(Constants.Name.BORDER_LEFT_WIDTH);
+    return getField(flatBufferStyle.borderLeftWidth());
   }
 
-  public String getBorderColor() {
-    Object color = get(Constants.Name.BORDER_COLOR);
-    return color == null ? null : color.toString();
+  public float getBorderRadius() {
+    return getField(flatBufferStyle.borderRadius());
   }
 
-  public String getBorderStyle() {
-    Object borderStyle = get(Constants.Name.BORDER_STYLE);
-    return borderStyle == null ? null : borderStyle.toString();
+  public float getBorderTopLeftRadius() {
+    return getField(flatBufferStyle.borderTopLeftRadius());
   }
 
-  public float getMargin(){
-    return WXUtils.getFloat(get(Constants.Name.MARGIN));
+  public float getBorderTopRightRadius() {
+    return getField(flatBufferStyle.borderTopRightRadius());
   }
 
-  public float getPadding(){
-    return WXUtils.getFloat(get(Constants.Name.PADDING));
+  public float getBorderBottomRightRadius() {
+    return getField(flatBufferStyle.borderBottomRightRadius());
   }
 
-  /*
-   * margin
-   **/
+  public float getBorderBottomLeftRadius() {
+    return getField(flatBufferStyle.borderBottomLeftRadius());
+  }
+
+  public
+  @Nullable
+  String getBorderColor() {
+    return flatBufferStyle.borderColor();
+  }
+
+  public
+  @Nullable
+  String getBorderTopColor() {
+    return flatBufferStyle.borderTopColor();
+  }
+
+  public
+  @Nullable
+  String getBorderRightColor() {
+    return flatBufferStyle.borderRightColor();
+  }
+
+  public
+  @Nullable
+  String getBorderBottomColor() {
+    return flatBufferStyle.borderBottomColor();
+  }
+
+  public
+  @Nullable
+  String getBorderLeftColor() {
+    return flatBufferStyle.borderLeftColor();
+  }
+
+  public
+  @Nullable
+  BorderStyle getBorderStyle() {
+    return getField(flatBufferStyle.borderStyle(), WXStyle::parseBorderStyle);
+  }
+
+  public
+  @Nullable
+  BorderStyle getBorderTopStyle() {
+    return getField(flatBufferStyle.borderTopStyle(), WXStyle::parseBorderStyle);
+  }
+
+  public
+  @Nullable
+  BorderStyle getBorderRightStyle() {
+    return getField(flatBufferStyle.borderRightStyle(), WXStyle::parseBorderStyle);
+  }
+
+  public
+  @Nullable
+  BorderStyle getBorderBottomStyle() {
+    return getField(flatBufferStyle.borderBottomStyle(), WXStyle::parseBorderStyle);
+  }
+
+  public
+  @Nullable
+  BorderStyle getBorderLeftStyle() {
+    return getField(flatBufferStyle.borderLeftStyle(), WXStyle::parseBorderStyle);
+  }
+
+  public float getMargin() {
+    return getField(flatBufferStyle.margin());
+  }
+
   public float getMarginTop() {
-    float temp = WXUtils.getFloat(get(Constants.Name.MARGIN_TOP));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.MARGIN));
-    }
-    return temp;
-  }
-
-  public float getMarginLeft() {
-    float temp = WXUtils.getFloat(get(Constants.Name.MARGIN_LEFT));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.MARGIN));
-    }
-    return temp;
+    return getField(flatBufferStyle.marginTop());
   }
 
   public float getMarginRight() {
-    float temp = WXUtils.getFloat(get(Constants.Name.MARGIN_RIGHT));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.MARGIN));
-    }
-    return temp;
+    return getField(flatBufferStyle.marginRight());
   }
 
   public float getMarginBottom() {
-    float temp = WXUtils.getFloat(get(Constants.Name.MARGIN_BOTTOM));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.MARGIN));
-    }
-    return temp;
+    return getField(flatBufferStyle.marginBottom());
   }
 
-  /*
-   * padding
-   **/
+  public float getMarginLeft() {
+    return getField(flatBufferStyle.marginLeft());
+  }
+
+  public float getPadding() {
+    return getField(flatBufferStyle.padding());
+  }
+
   public float getPaddingTop() {
-    float temp = WXUtils.getFloat(get(Constants.Name.PADDING_TOP));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.PADDING));
-    }
-    return temp;
-  }
-
-  public float getPaddingLeft() {
-    float temp = WXUtils.getFloat(get(Constants.Name.PADDING_LEFT));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.PADDING));
-    }
-    return temp;
+    return getField(flatBufferStyle.paddingTop());
   }
 
   public float getPaddingRight() {
-    float temp = WXUtils.getFloat(get(Constants.Name.PADDING_RIGHT));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.PADDING));
-    }
-    return temp;
+    return getField(flatBufferStyle.paddingRight());
   }
 
   public float getPaddingBottom() {
-    float temp = WXUtils.getFloat(get(Constants.Name.PADDING_BOTTOM));
-    if (WXUtils.isUndefined(temp)) {
-      temp = WXUtils.getFloat(get(Constants.Name.PADDING));
-    }
-    return temp;
+    return getField(flatBufferStyle.paddingBottom());
   }
 
-  /*
-   * position
-   **/
+  public float getPaddingLeft() {
+    return getField(flatBufferStyle.paddingLeft());
+  }
+
   public CSSPositionType getPosition() {
-    Object position = get(Constants.Name.POSITION);
-    if (position == null) {
-      return CSSPositionType.RELATIVE;
-    }
-    return CSSPositionTypeConvert.convert(position.toString().trim());
+    return getField(flatBufferStyle.position(), WXStyle::parsePosition);
   }
 
   public boolean isSticky() {
-    Object position = get(Constants.Name.POSITION);
-    if (position == null) {
-      return false;
-    }
-    return position.toString().equals(Constants.Value.STICKY);
+    return flatBufferStyle.position() == FlatBufferPosition.sticky;
   }
 
   public boolean isFixed() {
-    Object position = get(Constants.Name.POSITION);
-    if (position == null) {
-      return false;
-    }
-    return position.toString().equals(Constants.Value.FIXED);
-  }
-
-  public float getLeft() {
-    return WXUtils.getFloat(get(Constants.Name.LEFT));
+    return flatBufferStyle.position() == FlatBufferPosition.fixed;
   }
 
   public float getTop() {
-    return WXUtils.getFloat(get(Constants.Name.TOP));
+    return getField(flatBufferStyle.top());
   }
 
   public float getRight() {
-    return WXUtils.getFloat(get(Constants.Name.RIGHT));
+    return getField(flatBufferStyle.right());
   }
 
   public float getBottom() {
-    return WXUtils.getFloat(get(Constants.Name.BOTTOM));
+    return getField(flatBufferStyle.bottom());
+  }
+
+  public float getLeft() {
+    return getField(flatBufferStyle.left());
   }
 
   /*
    * others
    **/
-  public String getBackgroundColor() {
-    Object temp = get(Constants.Name.BACKGROUND_COLOR);
-    return temp == null ? "" : temp.toString();
-  }
-
-  public int getTimeFontSize() {
-    int fontSize = WXUtils.getInt(get("timeFontSize"));
-    if (fontSize <= 0) {
-      fontSize = WXText.sDEFAULT_SIZE;
-    }
-    return fontSize;
+  public
+  @Nullable
+  String getBackgroundColor() {
+    return flatBufferStyle.backgroundColor();
   }
 
   public float getOpacity() {
-    Object object = get(Constants.Name.OPACITY);
-    float opacity = 1;
-    if (object == null) {
-      return opacity;
-    }
-    return WXUtils.getFloat(object);
+    return getField(flatBufferStyle.opacity());
+  }
+
+  public int getBlur() {
+    return getField(flatBufferStyle.filter(), WXStyle::parseFilter);
   }
 
   public String getOverflow() {
-    Object obj = get(Constants.Name.OVERFLOW);
-    return obj == null ? Constants.Value.VISIBLE : obj.toString();
+    return getField(flatBufferStyle.overflow(), WXStyle::parseOverflow);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return map.equals(o);
+  public
+  @Nullable
+  String getTransform() {
+    return flatBufferStyle.transform();
   }
 
-  @Override
-  public int hashCode() {
-    return map.hashCode();
-  }
-
-  @Override
-  public void clear() {
-    map.clear();
-  }
-
-  @Override
-  public boolean containsKey(Object key) {
-    return map.containsKey(key);
-  }
-
-  @Override
-  public boolean containsValue(Object value) {
-    return map.containsValue(value);
-  }
-
-  @NonNull
-  @Override
-  public Set<Entry<String, Object>> entrySet() {
-    return map.entrySet();
-  }
-
-  @Override
-  public Object get(Object key) {
-    return map.get(key);
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return map.isEmpty();
-  }
-
-  @NonNull
-  @Override
-  public Set<String> keySet() {
-    return map.keySet();
-  }
-
-  @Override
-  public Object put(String key, Object value) {
-    return map.put(key,value);
-  }
-
-  @Override
-  public void putAll(Map<? extends String, ?> map) {
-    this.map.putAll(map);
+  public
+  @Nullable
+  String getTransformOrigin() {
+    return flatBufferStyle.transformOrigin();
   }
 
   /**
@@ -736,13 +756,12 @@ public class WXStyle implements Map<String, Object>,Cloneable {
    * @param byPesudo
    */
   public void putAll(Map<? extends String, ?> map, boolean byPesudo) {
-    this.map.putAll(map);
+    putAll(map);
     if (!byPesudo) {
       this.mPesudoResetStyleMap.putAll(map);
       processPesudoClasses(map);
     }
   }
-
 
   public Map<String, Object> getPesudoResetStyles() {
     return mPesudoResetStyleMap;
@@ -780,34 +799,574 @@ public class WXStyle implements Map<String, Object>,Cloneable {
     }
   }
 
+/*  @Override
+  public boolean equals(Object o) {
+    return (o instanceof WXStyle) &&
+           flatBufferStyle.getByteBuffer() != null &&
+           ((WXStyle) o).flatBufferStyle.getByteBuffer() != null &&
+           flatBufferStyle.getByteBuffer().equals(((WXStyle) o).flatBufferStyle.getByteBuffer())
+           && mutationStyle.equals(((WXStyle) o).mutationStyle);
+  }
+
+  @Override
+  public int hashCode() {
+    int ret = 17;
+    ret = 37 * ret + flatBufferStyle.getByteBuffer().hashCode();
+    ret = 37 * ret + mutationStyle.hashCode();
+    return ret;
+  }*/
+
+  @Override
+  public void clear() {
+    throw new UnsupportedOperationException("WXStyle don't support clear");
+  }
+
+  @Override
+  public boolean containsKey(Object key) {
+    return get(key) != null;
+  }
+
+  @Override
+  public boolean containsValue(Object value) {
+    return values().contains(value);
+  }
+
+  @NonNull
+  @Override
+  public Set<Entry<String, Object>> entrySet() {
+    return addStyleToSet(this::addToEntrySet);
+  }
+
+  @Override
+  public Object get(Object key) {
+    String str;
+    if (key != null && (str = key.toString()) != null) {
+      switch (str) {
+        case Constants.Name.ALIGN_ITEMS:
+          return wrap(getAlignItems());
+        case Constants.Name.ALIGN_SELF:
+          return wrap(getAlignSelf());
+        case Constants.Name.FLEX:
+          return wrap(getFlex());
+        case Constants.Name.FLEX_DIRECTION:
+          return wrap(getFlexDirection());
+        case Constants.Name.JUSTIFY_CONTENT:
+          return wrap(getJustifyContent());
+        case Constants.Name.FLEX_WRAP:
+          return wrap(getCSSWrap());
+        case Constants.Name.TEXT_DECORATION:
+          return wrap(getTextDecoration());
+        case Constants.Name.COLOR:
+          return wrap(getColor());
+        case Constants.Name.FONT_WEIGHT:
+          return wrap(getFontWeight());
+        case Constants.Name.FONT_STYLE:
+          return wrap(getFontStyle());
+        case Constants.Name.FONT_SIZE:
+          return wrap(getFontSize());
+        case Constants.Name.FONT_FAMILY:
+          return wrap(getFontFamily());
+        case Constants.Name.TEXT_ALIGN:
+          return wrap(getTextAlignment());
+        case Constants.Name.TEXT_OVERFLOW:
+          return wrap(getTextOverflow());
+        case Constants.Name.LINES:
+          return wrap(getLines());
+        case Constants.Name.LINE_HEIGHT:
+          return wrap(getLineHeight());
+        case Constants.Name.WIDTH:
+          return wrap(getWidth());
+        case Constants.Name.DEFAULT_WIDTH:
+          return wrap(getDefaultWidth());
+        case Constants.Name.MIN_WIDTH:
+          return wrap(getMinWidth());
+        case Constants.Name.MAX_WIDTH:
+          return wrap(getMaxWidth());
+        case Constants.Name.HEIGHT:
+          return wrap(getHeight());
+        case Constants.Name.DEFAULT_HEIGHT:
+          return wrap(getDefaultHeight());
+        case Constants.Name.MIN_HEIGHT:
+          return wrap(getMinHeight());
+        case Constants.Name.MAX_HEIGHT:
+          return wrap(getMaxHeight());
+        case Constants.Name.BORDER_WIDTH:
+          return wrap(getBorderWidth());
+        case Constants.Name.BORDER_TOP_WIDTH:
+          return wrap(getBorderTopWidth());
+        case Constants.Name.BORDER_RIGHT_WIDTH:
+          return wrap(getBorderRightWidth());
+        case Constants.Name.BORDER_BOTTOM_WIDTH:
+          return wrap(getBorderBottomWidth());
+        case Constants.Name.BORDER_LEFT_WIDTH:
+          return wrap(getBorderLeftWidth());
+        case Constants.Name.BORDER_RADIUS:
+          return wrap(getBorderRadius());
+        case Constants.Name.BORDER_TOP_LEFT_RADIUS:
+          return wrap(getBorderTopLeftRadius());
+        case Constants.Name.BORDER_TOP_RIGHT_RADIUS:
+          return wrap(getBorderTopRightRadius());
+        case Constants.Name.BORDER_BOTTOM_RIGHT_RADIUS:
+          return wrap(getBorderBottomRightRadius());
+        case Constants.Name.BORDER_BOTTOM_LEFT_RADIUS:
+          return wrap(getBorderBottomLeftRadius());
+        case Constants.Name.BORDER_COLOR:
+          return wrap(getBorderColor());
+        case Constants.Name.BORDER_TOP_COLOR:
+          return wrap(getBorderTopColor());
+        case Constants.Name.BORDER_RIGHT_COLOR:
+          return wrap(getBorderRightColor());
+        case Constants.Name.BORDER_BOTTOM_COLOR:
+          return wrap(getBorderBottomColor());
+        case Constants.Name.BORDER_LEFT_COLOR:
+          return wrap(getBorderLeftColor());
+        case Constants.Name.BORDER_STYLE:
+          return wrap(getBorderStyle());
+        case Constants.Name.BORDER_TOP_STYLE:
+          return wrap(getBorderTopStyle());
+        case Constants.Name.BORDER_RIGHT_STYLE:
+          return wrap(getBorderRightStyle());
+        case Constants.Name.BORDER_BOTTOM_STYLE:
+          return wrap(getBorderBottomStyle());
+        case Constants.Name.BORDER_LEFT_STYLE:
+          return wrap(getBorderLeftStyle());
+        case Constants.Name.MARGIN:
+          return wrap(getMargin());
+        case Constants.Name.MARGIN_TOP:
+          return wrap(getMarginTop());
+        case Constants.Name.MARGIN_RIGHT:
+          return wrap(getMarginRight());
+        case Constants.Name.MARGIN_BOTTOM:
+          return wrap(getMarginBottom());
+        case Constants.Name.MARGIN_LEFT:
+          return wrap(getMarginLeft());
+        case Constants.Name.PADDING:
+          return wrap(getPadding());
+        case Constants.Name.PADDING_TOP:
+          return wrap(getPaddingTop());
+        case Constants.Name.PADDING_RIGHT:
+          return wrap(getPaddingRight());
+        case Constants.Name.PADDING_BOTTOM:
+          return wrap(getPaddingBottom());
+        case Constants.Name.PADDING_LEFT:
+          return wrap(getPaddingLeft());
+        case Constants.Name.POSITION:
+          //TODO Sticky will be disable
+          return wrap(getPosition());
+        case Constants.Name.TOP:
+          return wrap(getTop());
+        case Constants.Name.RIGHT:
+          return wrap(getRight());
+        case Constants.Name.BOTTOM:
+          return wrap(getBottom());
+        case Constants.Name.LEFT:
+          return wrap(getLeft());
+        case Constants.Name.BACKGROUND_COLOR:
+          return wrap(getBackgroundColor());
+        case Constants.Name.OPACITY:
+          return wrap(getOpacity());
+        case Constants.Name.FILTER:
+          return wrap(getBlur());
+        case Constants.Name.OVERFLOW:
+          return wrap(getOverflow());
+        //TODO Transform && TransformOrigin
+        default:
+          return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  @Override
+  public boolean isEmpty() {
+    for (String field : FLAT_BUFFER_STYLES) {
+      if (get(field) != null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @NonNull
+  @Override
+  public Set<String> keySet() {
+    return addStyleToSet(this::addToKeySet);
+  }
+
+  //Put不起作用的话，WXListDomObject.getDefaultStyle中的flex:1就无效了
+  //TODO put it to the ArrayMap
+  @Override
+  public Object put(String key, Object value) {
+    return mutationStyle.put(key, value);
+  }
+
+  //TODO put it to the ArrayMap
+  @Override
+  public void putAll(Map<? extends String, ?> map) {
+    mutationStyle.putAll(map);
+  }
+
   @Override
   public Object remove(Object key) {
-    return map.remove(key);
+    throw new UnsupportedOperationException("WXStyle don't support remove");
   }
 
   @Override
   public int size() {
-    return map.size();
+    return keySet().size();
   }
 
   @NonNull
   @Override
   public Collection<Object> values() {
-    return map.values();
+    return addStyleToSet(this::addToValueSet);
   }
 
   @Override
-  protected WXStyle clone(){
-    WXStyle style = new WXStyle();
-    style.map.putAll(this.map);
-
-    for(Entry<String,Map<String,Object>> entry:this.mPesudoStyleMap.entrySet()){
-      Map<String,Object> valueClone = new ArrayMap<>();
+  protected WXStyle clone() throws CloneNotSupportedException {
+    WXStyle style = (WXStyle) super.clone();
+    style.mutationStyle = new ArrayMap<>();
+    style.mutationStyle.putAll(mutationStyle);
+    for (Map.Entry<String, Map<String, Object>> entry : this.mPesudoStyleMap.entrySet()) {
+      Map<String, Object> valueClone = new ArrayMap<>();
       valueClone.putAll(entry.getValue());
-      style.mPesudoStyleMap.put(entry.getKey(),valueClone);
+      style.mPesudoStyleMap.put(entry.getKey(), valueClone);
     }
 
     style.mPesudoResetStyleMap.putAll(this.mPesudoResetStyleMap);
     return style;
   }
+
+  private boolean addToEntrySet(@NonNull Set<Entry<String, Object>> set, String name) {
+    Object value = get(name);
+    return value != null && set.add(new FlatEntry(name, value));
+  }
+
+  private boolean addToKeySet(@NonNull Set<String> set, String key) {
+    Object value = get(key);
+    return value != null && set.add(key);
+  }
+
+  private boolean addToValueSet(@NonNull Set<Object> set, String key) {
+    Object value = get(key);
+    return value != null && set.add(value);
+  }
+
+  private static <T> T getField(String field, String2Generic<T> convert) {
+    return field == null ? null : convert.convert(field);
+  }
+
+  private static <T> T getField(byte field, Byte2Generic<T> convert) {
+    return field == BYTE_ENUM_UNDEFINE ? null : convert.convert(field);
+  }
+
+  private static int getField(byte field, Byte2Int convert) {
+    return field == BYTE_ENUM_UNDEFINE ? INT_UNDEFINE : convert.convert(field);
+  }
+
+  private static float getField(int field) {
+    return field == INT_UNDEFINE ? Float.NaN : field;
+  }
+
+  private static float getField(float field) {
+    return FloatUtil.floatsEqual(field, FLOAT_UNDEFINE) ? Float.NaN : field;
+  }
+
+  private static int getField(String field, String2Int convert) {
+    return field == null ? INT_UNDEFINE : convert.convert(field);
+  }
+
+  private static int getIntField(int filed) {
+    return filed == INT_UNDEFINE ? INT_UNDEFINE : filed;
+  }
+
+  private static
+  @Nullable
+  Float wrap(float value) {
+    return Float.isNaN(value) ? null : value;
+  }
+
+  private static
+  @Nullable
+  Integer wrap(int value) {
+    return value == INT_UNDEFINE ? null : value;
+  }
+
+  private static
+  @Nullable
+  Object wrap(Object value) {
+    return value;
+  }
+
+  private static <T> Set<T> addStyleToSet(AddField2Set<T> operation) {
+    Set<T> ret = WXDataStructureUtil.newHashSetWithExpectedSize(FLAT_BUFFER_STYLES.size());
+    for (String field : FLAT_BUFFER_STYLES) {
+      operation.add(ret, field);
+    }
+    return ret;
+  }
+
+  private @NonNull static CSSFlexDirection parseFlexDirection(byte flexDirection){
+    switch (flexDirection){
+      case FlatBufferFlexDirection.row:
+        return CSSFlexDirection.ROW;
+      default:
+        return CSSFlexDirection.COLUMN;
+    }
+  }
+
+  private static
+  @NonNull
+  WXTextDecoration parseTextDecoration(@Nullable String textDecoration) {
+    if (TextUtils.equals(textDecoration, Constants.Value.UNDERLINE)) {
+      return WXTextDecoration.UNDERLINE;
+    } else if (TextUtils.equals(textDecoration, Constants.Value.LINETHROUGH)) {
+      return WXTextDecoration.LINETHROUGH;
+    } else {
+      return WXTextDecoration.NONE;
+    }
+  }
+
+  private static
+  @FontWeight
+  int parseFontWeight(@Nullable String fontWeight) {
+    int ret = Typeface.NORMAL;
+    if (!TextUtils.isEmpty(fontWeight)) {
+      switch (fontWeight) {
+        case "600":
+        case "700":
+        case "800":
+        case "900":
+        case Constants.Value.BOLD:
+          ret = Typeface.BOLD;
+          break;
+      }
+    }
+    return ret;
+  }
+
+  private static
+  @FontStyle
+  int parseFontStyle(byte fontStyle) {
+    int ret = android.graphics.Typeface.NORMAL;
+    if (fontStyle == FlatBufferFontStyle.normal) {
+      ret = Typeface.ITALIC;
+    }
+    return ret;
+  }
+
+  private static
+  @IntRange(from = 0)
+  int parseFontSize(int fontSize, int viewPortW) {
+    int ret = WXText.sDEFAULT_SIZE;
+    if (fontSize > 0) {
+      ret = (int) getRealPxByWidth(fontSize, viewPortW);
+    }
+    return ret;
+  }
+
+  private static
+  @NonNull
+  Layout.Alignment parseTextAlignment(String textAlign) {
+    Layout.Alignment ret = Layout.Alignment.ALIGN_NORMAL;
+    if (TextUtils.equals(Constants.Value.LEFT, textAlign)) {
+      ret = Layout.Alignment.ALIGN_NORMAL;
+    } else if (TextUtils.equals(Constants.Value.CENTER, textAlign)) {
+      ret = Layout.Alignment.ALIGN_CENTER;
+    } else if (TextUtils.equals(Constants.Value.RIGHT, textAlign)) {
+      ret = Layout.Alignment.ALIGN_OPPOSITE;
+    }
+    return ret;
+  }
+
+  private static
+  @Nullable
+  TextUtils.TruncateAt parseTextOverflow(byte textOverFlow) {
+    TextUtils.TruncateAt ret = null;
+    if (textOverFlow == FlatBufferTextOverflow.ellipsis) {
+      ret = TextUtils.TruncateAt.END;
+    }
+    return ret;
+  }
+
+  private static
+  @IntRange(from = -1)
+  int parseLineHeight(int lineHeight, int viewPortW) {
+    int ret = UNSET;
+    if (lineHeight > 0) {
+      ret = (int) WXViewUtils.getRealPxByWidth(lineHeight, viewPortW);
+    }
+    return ret;
+  }
+
+  private static
+  @NonNull
+  BorderStyle parseBorderStyle(byte borderStyle) {
+    switch (borderStyle) {
+      case FlatBufferBorderStyle.dashed:
+        return BorderStyle.DASHED;
+      case FlatBufferBorderStyle.dotted:
+        return BorderStyle.DOTTED;
+      default:
+        return BorderStyle.SOLID;
+    }
+  }
+
+  private static
+  @NonNull
+  CSSPositionType parsePosition(byte cssPosition) {
+    switch (cssPosition) {
+      case FlatBufferPosition.absolute:
+      case FlatBufferPosition.fixed:
+        return CSSPositionType.ABSOLUTE;
+      default:
+        return CSSPositionType.RELATIVE;
+    }
+  }
+
+  @Overflow
+  private static String parseOverflow(byte overflow) {
+    switch (overflow) {
+      case FlatBufferOverFlow.visible:
+        return Constants.Value.VISIBLE;
+      default:
+        return Constants.Value.HIDDEN;
+    }
+  }
+
+  private static int parseFilter(String value) {
+    int ret = 0;
+    if (!TextUtils.isEmpty(value)) {
+      try {
+        int start = value.indexOf("blur(");
+        int end = value.indexOf("px)");
+        if (end == -1) {
+          end = value.indexOf(")");
+        }
+        if (start == 0 && start < end) {
+          int blur = Integer.parseInt(value.substring(5, end));
+          //unlike css blur filter(https://developer.mozilla.org/en-US/docs/Web/CSS/filter),in weex
+          //we specify the blur radius in [0,10] to improve performance and avoid potential oom issue.
+          ret = Math.min(10, Math.max(0, blur));
+        }
+      } catch (NumberFormatException e) {
+
+      }
+    }
+    return ret;
+  }
+
+  /*
+* text-decoration
+**/
+  public static WXTextDecoration getTextDecoration(Map<String, Object> style) {
+    Object obj = style.get(Constants.Name.TEXT_DECORATION);
+    if (obj == null) {
+      return WXTextDecoration.NONE;
+    }
+    String textDecoration = obj.toString();
+    return parseTextDecoration(textDecoration);
+  }
+
+  public static String getTextColor(Map<String, Object> style) {
+    if (style == null) {
+      return "";
+    }
+    Object temp = style.get(Constants.Name.COLOR);
+    return temp == null ? "" : temp.toString();
+  }
+
+  public static int getFontWeight(Map<String, Object> style) {
+    int typeface = android.graphics.Typeface.NORMAL;
+    if (style != null) {
+      Object temp = style.get(Constants.Name.FONT_WEIGHT);
+      if (temp != null) {
+        String fontWeight = temp.toString();
+        typeface = parseFontWeight(fontWeight);
+      }
+    }
+    return typeface;
+  }
+
+  public static int getFontStyle(Map<String, Object> style) {
+    int typeface = android.graphics.Typeface.NORMAL;
+    if (style == null) {
+      return typeface;
+    }
+    Object temp = style.get(Constants.Name.FONT_STYLE);
+    if (temp == null) {
+      return typeface;
+    }
+    String fontWeight = temp.toString();
+    if (fontWeight.equals(Constants.Value.ITALIC)) {
+      typeface = android.graphics.Typeface.ITALIC;
+    }
+    return typeface;
+  }
+
+  public static int getFontSize(Map<String, Object> style, int viewPortW) {
+    if (style == null) {
+      return (int) getRealPxByWidth(WXText.sDEFAULT_SIZE, viewPortW);
+    }
+    int fontSize = WXUtils.getInt(style.get(Constants.Name.FONT_SIZE));
+    return parseFontSize(fontSize, viewPortW);
+  }
+
+  public static String getFontFamily(Map<String, Object> style) {
+    String fontFamily = null;
+    if (style != null) {
+      Object temp;
+      temp = style.get(Constants.Name.FONT_FAMILY);
+      if (temp != null) {
+        fontFamily = temp.toString();
+      }
+    }
+    return fontFamily;
+  }
+
+  public static Layout.Alignment getTextAlignment(Map<String, Object> style) {
+    Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+    Object value = style.get(Constants.Name.TEXT_ALIGN);
+    if (value != null) {
+      String textAlign = value.toString();
+      if (TextUtils.equals(Constants.Value.LEFT, textAlign)) {
+        alignment = Layout.Alignment.ALIGN_NORMAL;
+      } else if (TextUtils.equals(Constants.Value.CENTER, textAlign)) {
+        alignment = Layout.Alignment.ALIGN_CENTER;
+      } else if (TextUtils.equals(Constants.Value.RIGHT, textAlign)) {
+        alignment = Layout.Alignment.ALIGN_OPPOSITE;
+      }
+    }
+    return alignment;
+  }
+
+  public static TextUtils.TruncateAt getTextOverflow(Map<String, Object> style) {
+    TextUtils.TruncateAt truncateAt = null;
+    Object value = style.get(Constants.Name.TEXT_OVERFLOW);
+    if (value != null) {
+      String ellipse = value.toString();
+      if (TextUtils.equals(Constants.Name.ELLIPSIS, ellipse)) {
+        truncateAt = TextUtils.TruncateAt.END;
+      }
+    }
+    return truncateAt;
+  }
+
+  public static int getLines(Map<String, Object> style) {
+    return WXUtils.getInt(style.get(Constants.Name.LINES));
+  }
+
+  public static int getLineHeight(Map<String, Object> style, int viewPortW) {
+    if (style == null) {
+      return UNSET;
+    }
+    int lineHeight = WXUtils.getInt(style.get(Constants.Name.LINE_HEIGHT));
+    if (lineHeight <= 0) {
+      lineHeight = UNSET;
+      return lineHeight;
+    }
+    return (int) getRealPxByWidth(lineHeight, viewPortW);
+  }
 }
+

@@ -161,6 +161,7 @@ import com.taobao.weex.dom.ImmutableDomObject;
 import com.taobao.weex.dom.WXDomHandler;
 import com.taobao.weex.dom.WXDomObject;
 import com.taobao.weex.dom.WXDomTask;
+import com.taobao.weex.dom.WXEvent;
 import com.taobao.weex.dom.WXStyle;
 import com.taobao.weex.dom.flex.Spacing;
 import com.taobao.weex.ui.IFComponentHolder;
@@ -587,9 +588,11 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
   }
 
   private void addEvents() {
-    int count = mDomObj.getEvents().size();
-    for (int i = 0; i < count; ++i) {
-      addEvent(mDomObj.getEvents().get(i));
+    WXEvent events;
+    if((events=mDomObj.getEvents())!=null){
+      for(String event : events){
+        addEvent(event);
+      }
     }
     setActiveTouchListener();
   }
