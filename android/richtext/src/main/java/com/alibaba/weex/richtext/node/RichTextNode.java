@@ -224,6 +224,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.WXSDKManager;
 import com.taobao.weex.common.Constants;
+import com.taobao.weex.dom.TextDecorationSpan;
 import com.taobao.weex.dom.WXCustomStyleSpan;
 import com.taobao.weex.dom.WXStyle;
 import com.taobao.weex.utils.WXResourceUtils;
@@ -320,15 +321,15 @@ public abstract class RichTextNode {
   }
 
   protected void updateSpans(SpannableStringBuilder spannableStringBuilder, int level) {
-    if (style != null) {
+    WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(mInstanceId);
+    if (style != null && instance != null) {
       List<Object> spans = new LinkedList<>();
-      WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(mInstanceId);
       WXCustomStyleSpan customStyleSpan = createCustomStyleSpan();
       if (customStyleSpan != null) {
         spans.add(customStyleSpan);
       }
       if (style.containsKey(Constants.Name.FONT_SIZE)) {
-        spans.add(new AbsoluteSizeSpan(WXStyle.getFontSize(style, instance.getViewPortWidth())));
+        spans.add(new AbsoluteSizeSpan(WXStyle.getFontSize(style, instance.getInstanceViewPortWidth())));
       }
       if (style.containsKey(Constants.Name.BACKGROUND_COLOR)) {
         int color = WXResourceUtils.getColor(style.get(Constants.Name.BACKGROUND_COLOR).toString(),
@@ -340,6 +341,9 @@ public abstract class RichTextNode {
       if (style.containsKey(Constants.Name.COLOR)) {
         spans.add(new ForegroundColorSpan(WXResourceUtils.getColor(WXStyle.getTextColor(style))));
       }
+      TextDecorationSpan textDecorationSpan =
+          new TextDecorationSpan(WXStyle.getTextDecoration(style));
+      spans.add(textDecorationSpan);
       for (Object span : spans) {
         spannableStringBuilder.setSpan(span, 0, spannableStringBuilder.length(),
                                        createSpanFlag(level));
