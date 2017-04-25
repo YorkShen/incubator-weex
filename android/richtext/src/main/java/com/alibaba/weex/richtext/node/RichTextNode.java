@@ -224,7 +224,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.WXSDKManager;
 import com.taobao.weex.common.Constants;
-import com.taobao.weex.dom.TextDecorationSpan;
 import com.taobao.weex.dom.WXCustomStyleSpan;
 import com.taobao.weex.dom.WXStyle;
 import com.taobao.weex.utils.WXResourceUtils;
@@ -341,12 +340,9 @@ public abstract class RichTextNode {
       if (style.containsKey(Constants.Name.COLOR)) {
         spans.add(new ForegroundColorSpan(WXResourceUtils.getColor(WXStyle.getTextColor(style))));
       }
-      TextDecorationSpan textDecorationSpan =
-          new TextDecorationSpan(WXStyle.getTextDecoration(style));
-      spans.add(textDecorationSpan);
+      int spanFlag = createSpanFlag(level);
       for (Object span : spans) {
-        spannableStringBuilder.setSpan(span, 0, spannableStringBuilder.length(),
-                                       createSpanFlag(level));
+        spannableStringBuilder.setSpan(span, 0, spannableStringBuilder.length(), spanFlag);
       }
     }
   }

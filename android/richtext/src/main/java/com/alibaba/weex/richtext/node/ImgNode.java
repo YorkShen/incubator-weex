@@ -250,15 +250,16 @@ class ImgNode extends RichTextNode {
 
   @Override
   protected void updateSpans(SpannableStringBuilder spannableStringBuilder, int level) {
+    WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(mInstanceId);
     if (WXSDKEngine.getDrawableLoader() != null &&
         style.containsKey(Constants.Name.WIDTH) &&
         style.containsKey(Constants.Name.HEIGHT) &&
-        attr.containsKey(Constants.Name.SRC)) {
-      WXSDKInstance instance = WXSDKManager.getInstance().getSDKInstance(mInstanceId);
+        attr.containsKey(Constants.Name.SRC) &&
+        instance != null) {
       int width = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.WIDTH)),
-                                         instance.getViewPortWidth());
+                                         instance.getInstanceViewPortWidth());
       int height = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.HEIGHT)),
-                                          instance.getViewPortWidth());
+                                          instance.getInstanceViewPortWidth());
       ImgSpan imageSpan = new ImgSpan(width, height);
 
       String url = attr.get(Constants.Name.SRC).toString();

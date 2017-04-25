@@ -206,8 +206,11 @@
 package com.alibaba.weex.richtext.node;
 
 import android.content.Context;
+import android.text.SpannableStringBuilder;
 
 import com.taobao.weex.common.Constants;
+import com.taobao.weex.dom.TextDecorationSpan;
+import com.taobao.weex.dom.WXStyle;
 
 class SpanNode extends RichTextNode {
 
@@ -237,5 +240,12 @@ class SpanNode extends RichTextNode {
   @Override
   protected boolean isInternalNode() {
     return true;
+  }
+
+  @Override
+  protected void updateSpans(SpannableStringBuilder spannableStringBuilder, int level) {
+    super.updateSpans(spannableStringBuilder, level);
+    spannableStringBuilder.setSpan(new TextDecorationSpan(WXStyle.getTextDecoration(style)), 0,
+                                   spannableStringBuilder.length(), createSpanFlag(level));
   }
 }
