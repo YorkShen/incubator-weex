@@ -170,6 +170,7 @@ public class Constants {
     String OFFSET = "offset";
     String ANIMATED = "animated";
     String STABLE = "stable";
+    String PSEUDO_REF="pseudoRef";
 
     String INSERT_CELL_ANIMATION = "insertAnimation";
     String DELETE_CELL_ANIMATION = "deleteAnimation";
@@ -226,6 +227,7 @@ public class Constants {
   public interface Event {
 
     String CLICK = "click";
+    String ITEM_CLICK="itemclick";
     String APPEAR = "appear";
     String DISAPPEAR = "disappear";
     String LOADMORE = "loadmore";

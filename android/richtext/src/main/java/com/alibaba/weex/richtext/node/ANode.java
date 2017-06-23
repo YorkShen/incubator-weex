@@ -207,7 +207,6 @@ package com.alibaba.weex.richtext.node;
 
 import android.content.Context;
 import android.text.SpannableStringBuilder;
-
 import com.alibaba.weex.richtext.span.ASpan;
 
 class ANode extends RichTextNode {
@@ -215,16 +214,16 @@ class ANode extends RichTextNode {
   static class ANodeCreator implements RichTextNodeCreator<ANode> {
 
     @Override
-    public ANode createRichTextNode(Context context, String instanceId) {
-      return new ANode(context, instanceId);
+    public ANode createRichTextNode(Context context, String instanceId, String componentRef) {
+      return new ANode(context, instanceId, componentRef);
     }
   }
 
   public static final String NODE_TYPE = "a";
   public static final String HREF = "href";
 
-  private ANode(Context context, String instanceId) {
-    super(context, instanceId);
+  private ANode(Context context, String instanceId, String componentRef) {
+    super(context, instanceId, componentRef);
   }
 
   @Override
@@ -243,7 +242,7 @@ class ANode extends RichTextNode {
     if (attr != null && attr.containsKey(HREF)) {
       ASpan aSpan = new ASpan(mInstanceId, attr.get(HREF).toString());
       spannableStringBuilder.setSpan(aSpan, 0, spannableStringBuilder.length(),
-                                     createSpanFlag(level));
+          createSpanFlag(level));
     }
   }
 }

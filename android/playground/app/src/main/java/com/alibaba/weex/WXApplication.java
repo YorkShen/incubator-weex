@@ -28,7 +28,6 @@ import com.alibaba.weex.commons.adapter.JSExceptionAdapter;
 import com.alibaba.weex.commons.adapter.PicassoBasedDrawableLoader;
 import com.alibaba.weex.extend.PlayDebugAdapter;
 import com.alibaba.weex.extend.adapter.InterceptWXHttpAdapter;
-import com.alibaba.weex.extend.component.RichText;
 import com.alibaba.weex.extend.component.WXComponentSyncTest;
 import com.alibaba.weex.extend.component.WXMask;
 import com.alibaba.weex.extend.component.WXParallax;

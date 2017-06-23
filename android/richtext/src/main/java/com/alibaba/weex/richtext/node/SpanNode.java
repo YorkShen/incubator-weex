@@ -207,7 +207,6 @@ package com.alibaba.weex.richtext.node;
 
 import android.content.Context;
 import android.text.SpannableStringBuilder;
-
 import com.taobao.weex.common.Constants;
 import com.taobao.weex.dom.TextDecorationSpan;
 import com.taobao.weex.dom.WXStyle;
@@ -217,15 +216,15 @@ class SpanNode extends RichTextNode {
   static class SpanNodeCreator implements RichTextNodeCreator<SpanNode> {
 
     @Override
-    public SpanNode createRichTextNode(Context context, String instanceId) {
-      return new SpanNode(context, instanceId);
+    public SpanNode createRichTextNode(Context context, String instanceId, String componentRef) {
+      return new SpanNode(context, instanceId, componentRef);
     }
   }
 
   public static final String NODE_TYPE = "span";
 
-  private SpanNode(Context context, String instanceId) {
-    super(context, instanceId);
+  private SpanNode(Context context, String instanceId, String componentRef) {
+    super(context, instanceId, componentRef);
   }
 
   @Override

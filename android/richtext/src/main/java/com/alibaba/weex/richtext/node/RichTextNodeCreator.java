@@ -208,5 +208,6 @@ package com.alibaba.weex.richtext.node;
 import android.content.Context;
 
 public interface RichTextNodeCreator<T extends RichTextNode> {
-  T createRichTextNode(Context context, String instanceId);
+
+  T createRichTextNode(Context context, String instanceId, String componentRef);
 }

@@ -205,10 +205,8 @@
 
 package com.alibaba.weex.richtext.span;
 
-import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
-
 import com.taobao.weex.utils.ATagUtil;
 
 public class ASpan extends ClickableSpan {
@@ -225,7 +223,4 @@ public class ASpan extends ClickableSpan {
     ATagUtil.onClick(widget, mInstanceId, mURL);
   }
 
-  @Override
-  public void updateDrawState(TextPaint ds) {
-  }
 }

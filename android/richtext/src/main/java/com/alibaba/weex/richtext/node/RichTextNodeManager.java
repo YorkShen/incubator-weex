@@ -209,10 +209,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
-
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.weex.utils.WXLogUtils;
-
 import java.util.Map;
 
 public class RichTextNodeManager {
@@ -231,14 +229,19 @@ public class RichTextNodeManager {
   }
 
   @Nullable
-  static RichTextNode createRichTextNode(@NonNull Context context, @NonNull String instanceId, @Nullable JSONObject jsonObject) {
+  static RichTextNode createRichTextNode(@NonNull Context context, @NonNull String instanceId,
+      @NonNull String componentRef, @Nullable JSONObject jsonObject) {
+    RichTextNode instance = null;
     try {
-      RichTextNode instance = registeredTextNodes.get(jsonObject.getString(RichTextNode.TYPE)).createRichTextNode(context, instanceId);
-      instance.parse(context, instanceId, jsonObject);
-      return instance;
+      if (jsonObject != null) {
+        instance = registeredTextNodes.get(jsonObject.getString(RichTextNode.TYPE))
+            .createRichTextNode(context, instanceId, componentRef);
+        instance.parse(context, instanceId, componentRef, jsonObject);
+      }
     } catch (Exception e) {
       WXLogUtils.e("Richtext", WXLogUtils.getStackTrace(e));
-      return null;
+      instance = null;
     }
+    return instance;
   }
 }

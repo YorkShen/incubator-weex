@@ -205,12 +205,15 @@
 
 package com.alibaba.weex.richtext.node;
 
+import static com.taobao.weex.utils.WXViewUtils.getRealPxByWidth;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
-
 import com.alibaba.weex.richtext.span.ImgSpan;
+import com.alibaba.weex.richtext.span.ItemClickSpan;
 import com.taobao.weex.WXSDKEngine;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.WXSDKManager;
@@ -219,23 +222,23 @@ import com.taobao.weex.adapter.URIAdapter;
 import com.taobao.weex.common.Constants;
 import com.taobao.weex.utils.ImgURIUtil;
 import com.taobao.weex.utils.WXUtils;
-
-import static com.taobao.weex.utils.WXViewUtils.getRealPxByWidth;
+import java.util.LinkedList;
+import java.util.List;
 
 class ImgNode extends RichTextNode {
 
   static class ImgNodeCreator implements RichTextNodeCreator<ImgNode> {
 
     @Override
-    public ImgNode createRichTextNode(Context context, String instanceId) {
-      return new ImgNode(context, instanceId);
+    public ImgNode createRichTextNode(Context context, String instanceId, String componentRef) {
+      return new ImgNode(context, instanceId, componentRef);
     }
   }
 
   public static final String NODE_TYPE = "image";
 
-  private ImgNode(Context context, String instanceId) {
-    super(context, instanceId);
+  private ImgNode(Context context, String instanceId, String componentRef) {
+    super(context, instanceId, componentRef);
   }
 
   @Override
@@ -256,24 +259,40 @@ class ImgNode extends RichTextNode {
         style.containsKey(Constants.Name.HEIGHT) &&
         attr.containsKey(Constants.Name.SRC) &&
         instance != null) {
-      int width = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.WIDTH)),
-                                         instance.getInstanceViewPortWidth());
-      int height = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.HEIGHT)),
-                                          instance.getInstanceViewPortWidth());
-      ImgSpan imageSpan = new ImgSpan(width, height);
+      List<Object> spans = new LinkedList<>();
+      spans.add(createImgSpan(instance));
 
-      String url = attr.get(Constants.Name.SRC).toString();
-      Uri rewrited = instance.rewriteUri(Uri.parse(url), URIAdapter.IMAGE);
-      if (Constants.Scheme.LOCAL.equals(rewrited.getScheme())) {
-        Drawable localDrawable = ImgURIUtil.getDrawableFromLoaclSrc(mContext, rewrited);
-        imageSpan.setDrawable(localDrawable, false);
-      } else {
-        DrawableStrategy drawableStrategy = new DrawableStrategy();
-        drawableStrategy.width = width;
-        drawableStrategy.height = height;
-        WXSDKEngine.getDrawableLoader().setDrawable(rewrited.toString(), imageSpan, drawableStrategy);
+      if (attr.containsKey(Constants.Name.PSEUDO_REF)) {
+        spans.add(new ItemClickSpan(mInstanceId, mComponentRef,
+            attr.get(Constants.Name.PSEUDO_REF).toString()));
       }
-      spannableStringBuilder.setSpan(imageSpan, 0, spannableStringBuilder.length(), createSpanFlag(level));
+
+      for (Object span : spans) {
+        spannableStringBuilder.setSpan(
+            span, 0, spannableStringBuilder.length(), createSpanFlag(level));
+      }
     }
+  }
+
+  @NonNull
+  private ImgSpan createImgSpan(WXSDKInstance instance) {
+    int width = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.WIDTH)),
+        instance.getInstanceViewPortWidth());
+    int height = (int) getRealPxByWidth(WXUtils.getFloat(style.get(Constants.Name.HEIGHT)),
+        instance.getInstanceViewPortWidth());
+    ImgSpan imageSpan = new ImgSpan(width, height);
+
+    String url = attr.get(Constants.Name.SRC).toString();
+    Uri rewrited = instance.rewriteUri(Uri.parse(url), URIAdapter.IMAGE);
+    if (Constants.Scheme.LOCAL.equals(rewrited.getScheme())) {
+      Drawable localDrawable = ImgURIUtil.getDrawableFromLoaclSrc(mContext, rewrited);
+      imageSpan.setDrawable(localDrawable, false);
+    } else {
+      DrawableStrategy drawableStrategy = new DrawableStrategy();
+      drawableStrategy.width = width;
+      drawableStrategy.height = height;
+      WXSDKEngine.getDrawableLoader().setDrawable(rewrited.toString(), imageSpan, drawableStrategy);
+    }
+    return imageSpan;
   }
 }

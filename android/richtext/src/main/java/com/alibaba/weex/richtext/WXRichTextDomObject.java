@@ -210,7 +210,6 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
-
 import com.alibaba.weex.richtext.node.RichTextNode;
 import com.taobao.weex.dom.WXTextDomObject;
 
@@ -221,9 +220,11 @@ public class WXRichTextDomObject extends WXTextDomObject {
   protected Spanned createSpanned(String text) {
     if (getDomContext().getUIContext() != null &&
         !TextUtils.isEmpty(getDomContext().getInstanceId())) {
-      Spannable spannable = RichTextNode.parse(getDomContext().getUIContext(),
-                                               getDomContext().getInstanceId(),
-                                               text);
+      Spannable spannable = RichTextNode.parse(
+          getDomContext().getUIContext(),
+          getDomContext().getInstanceId(),
+          getRef(),
+          text);
       updateSpannable(spannable, RichTextNode.createSpanFlag(0));
       return spannable;
     } else {
