@@ -262,9 +262,9 @@ class ImgNode extends RichTextNode {
       List<Object> spans = new LinkedList<>();
       spans.add(createImgSpan(instance));
 
-      if (attr.containsKey(Constants.Name.PSEUDO_REF)) {
+      if (attr.containsKey(RichTextNode.PSEUDO_REF)) {
         spans.add(new ItemClickSpan(mInstanceId, mComponentRef,
-            attr.get(Constants.Name.PSEUDO_REF).toString()));
+            attr.get(RichTextNode.PSEUDO_REF).toString()));
       }
 
       for (Object span : spans) {
