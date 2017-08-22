@@ -180,6 +180,8 @@ public class Constants {
     String NORMAL = "normal";
     String ARIA_LABEL = "ariaLabel";
     String ARIA_HIDDEN = "ariaHidden";
+
+    String FLAT = "flat";
   }
 
   public interface Value {

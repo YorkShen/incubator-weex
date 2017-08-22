@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import com.taobao.weex.WXEnvironment;
 import com.taobao.weex.WXSDKInstance;
+import com.taobao.weex.adapter.DrawableStrategy;
+import com.taobao.weex.adapter.IDrawableLoader;
 import com.taobao.weex.adapter.IWXImgLoaderAdapter;
 import com.taobao.weex.adapter.URIAdapter;
 import com.taobao.weex.annotation.Component;
@@ -41,10 +43,14 @@ import com.taobao.weex.bridge.JSCallback;
 import com.taobao.weex.common.Constants;
 import com.taobao.weex.common.WXImageSharpen;
 import com.taobao.weex.common.WXImageStrategy;
+import com.taobao.weex.common.WXImageStrategy.ImageListener;
 import com.taobao.weex.common.WXRuntimeException;
 import com.taobao.weex.dom.ImmutableDomObject;
 import com.taobao.weex.dom.WXDomObject;
+import com.taobao.weex.dom.WXImageQuality;
 import com.taobao.weex.ui.ComponentCreator;
+import com.taobao.weex.ui.flat.FlatComponent;
+import com.taobao.weex.ui.flat.widget.ImageWidget;
 import com.taobao.weex.ui.view.WXImageView;
 import com.taobao.weex.ui.view.border.BorderDrawable;
 import com.taobao.weex.utils.ImageDrawable;
@@ -65,21 +71,33 @@ import java.util.Map;
  * Image component
  */
 @Component(lazyload = false)
-public class WXImage extends WXComponent<ImageView> {
-
+public class WXImage extends WXComponent<ImageView> implements FlatComponent<ImageWidget> {
   public static final String SUCCEED = "success";
   public static final String ERRORDESC = "errorDesc";
   public final static ScaleType DEFAULT_SCALE_TYPE = ScaleType.FIT_XY;
 
   private String mSrc;
   private int mBlurRadius;
-
+  private ImageWidget imageWidget;
   private static SingleFunctionParser.FlatMapper<Integer> BLUR_RADIUS_MAPPER = new SingleFunctionParser.FlatMapper<Integer>() {
     @Override
     public Integer map(String raw) {
       return WXUtils.getInteger(raw,0);
     }
   };
+
+  @Override
+  public boolean promoteToView(boolean checkAncestor) {
+    return getInstance().getFlatUIContext().promoteToView(this, checkAncestor, WXImage.class);
+  }
+
+  @Override
+  @NonNull public ImageWidget getOrCreateFlatWidget() {
+    if(imageWidget == null){
+      imageWidget = new ImageWidget(getInstance().getFlatUIContext().getFlatComponentAncestor(this).getHostView());
+    }
+    return imageWidget;
+  }
 
   public static class Ceator implements ComponentCreator {
     public WXComponent createInstance(WXSDKInstance instance, WXDomObject node, WXVContainer parent) throws IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -109,36 +127,36 @@ public class WXImage extends WXComponent<ImageView> {
     return view;
   }
 
-    @Override
-    protected boolean setProperty(String key, Object param) {
-      switch (key) {
-        case Constants.Name.RESIZE_MODE:
-          String resize_mode = WXUtils.getString(param, null);
-          if (resize_mode != null)
-            setResizeMode(resize_mode);
-          return true;
-        case Constants.Name.RESIZE:
-          String resize = WXUtils.getString(param, null);
-          if (resize != null)
-            setResize(resize);
-          return true;
-        case Constants.Name.SRC:
-          String src = WXUtils.getString(param, null);
-          if (src != null)
-            setSrc(src);
-          return true;
-        case Constants.Name.IMAGE_QUALITY:
-          return true;
-        case Constants.Name.FILTER:
-          int blurRadius = 0;
-          if(param != null && param instanceof String) {
-            blurRadius = parseBlurRadius((String)param);
-          }
-          if(!TextUtils.isEmpty(this.mSrc)) {
-            setBlurRadius(this.mSrc,blurRadius);
-          }
-          return true;
-      }
+  @Override
+  protected boolean setProperty(String key, Object param) {
+    switch (key) {
+      case Constants.Name.RESIZE_MODE:
+        String resize_mode = WXUtils.getString(param, null);
+        if (resize_mode != null)
+          setResizeMode(resize_mode);
+        return true;
+      case Constants.Name.RESIZE:
+        String resize = WXUtils.getString(param, null);
+        if (resize != null)
+          setResize(resize);
+        return true;
+      case Constants.Name.SRC:
+        String src = WXUtils.getString(param, null);
+        if (src != null)
+          setSrc(src);
+        return true;
+      case Constants.Name.IMAGE_QUALITY:
+        return true;
+      case Constants.Name.FILTER:
+        int blurRadius = 0;
+        if (param != null && param instanceof String) {
+          blurRadius = parseBlurRadius((String) param);
+        }
+        if (!TextUtils.isEmpty(this.mSrc)) {
+          setBlurRadius(this.mSrc, blurRadius);
+        }
+        return true;
+    }
     return super.setProperty(key, param);
   }
 
@@ -147,6 +165,18 @@ public class WXImage extends WXComponent<ImageView> {
     super.refreshData(component);
     if (component instanceof WXImage) {
       setSrc(component.getDomObject().getAttrs().getImageSrc());
+    }
+  }
+
+  @Override
+  public boolean isVirtualComponent() {
+    return !promoteToView(true);
+  }
+
+  @Override
+  protected void createViewImpl() {
+    if(promoteToView(true)){
+      super.createViewImpl();
     }
   }
 
@@ -168,7 +198,13 @@ public class WXImage extends WXComponent<ImageView> {
           break;
       }
     }
-    getHostView().setScaleType(scaleType);
+
+    if(promoteToView(true)) {
+      getHostView().setScaleType(scaleType);
+    }
+    else{
+      getOrCreateFlatWidget().setScaleType(scaleType);
+    }
   }
 
   /**
@@ -178,7 +214,10 @@ public class WXImage extends WXComponent<ImageView> {
   private void setLocalSrc(Uri rewrited) {
     ImageView imageView;
     Drawable localDrawable = ImgURIUtil.getDrawableFromLoaclSrc(getContext(), rewrited);
-    if (localDrawable != null && (imageView = getHostView()) != null) {
+    if(!promoteToView(true)){
+      getOrCreateFlatWidget().setDrawable(localDrawable);
+    }
+    else if (localDrawable != null && (imageView = getHostView()) != null) {
       imageView.setImageDrawable(localDrawable);
     }
   }
@@ -252,55 +291,76 @@ public class WXImage extends WXComponent<ImageView> {
     }
   }
 
-  private void setRemoteSrc(Uri rewrited,int blurRadius) {
+  private void setRemoteSrc(Uri rewrited, int blurRadius) {
+    WXImageStrategy imageStrategy = createImageStrategy(blurRadius);
+    WXImageQuality imageQuality = getDomObject().getAttrs().getImageQuality();
 
-      WXImageStrategy imageStrategy = new WXImageStrategy();
-      imageStrategy.isClipping = true;
-
-      WXImageSharpen imageSharpen = getDomObject().getAttrs().getImageSharpen();
-      imageStrategy.isSharpen = imageSharpen == WXImageSharpen.SHARPEN;
-
-      imageStrategy.blurRadius = Math.max(0, blurRadius);
-      this.mBlurRadius = blurRadius;
-
-      imageStrategy.setImageListener(new WXImageStrategy.ImageListener() {
-        @Override
-        public void onImageFinish(String url, ImageView imageView, boolean result, Map extra) {
-          if (getDomObject() != null && getDomObject().getEvents().contains(Constants.Event.ONLOAD)) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            Map<String, Object> size = new HashMap<>(2);
-            if (imageView != null && imageView instanceof Measurable) {
-              size.put("naturalWidth", ((Measurable) imageView).getNaturalWidth());
-              size.put("naturalHeight", ((Measurable) imageView).getNaturalHeight());
-            } else {
-              size.put("naturalWidth", 0);
-              size.put("naturalHeight", 0);
-            }
-
-            if (getDomObject() != null && containsEvent(Constants.Event.ONLOAD)) {
-              params.put("success", result);
-              params.put("size", size);
-              fireEvent(Constants.Event.ONLOAD, params);
-            }
-          }
-        }
-      });
-
-        String placeholder=null;
-        if(getDomObject().getAttrs().containsKey(Constants.Name.PLACEHOLDER)){
-            placeholder= (String) getDomObject().getAttrs().get(Constants.Name.PLACEHOLDER);
-        }else if(getDomObject().getAttrs().containsKey(Constants.Name.PLACE_HOLDER)){
-            placeholder=(String)getDomObject().getAttrs().get(Constants.Name.PLACE_HOLDER);
-        }
-        if(placeholder!=null){
-            imageStrategy.placeHolder = getInstance().rewriteUri(Uri.parse(placeholder),URIAdapter.IMAGE).toString();
-        }
-
+    if (promoteToView(true)) {
+      imageStrategy.setImageListener(createImageListener());
       IWXImgLoaderAdapter imgLoaderAdapter = getInstance().getImgLoaderAdapter();
       if (imgLoaderAdapter != null) {
-        imgLoaderAdapter.setImage(rewrited.toString(), getHostView(),
-            getDomObject().getAttrs().getImageQuality(), imageStrategy);
+        imgLoaderAdapter.setImage(
+            rewrited.toString(), getHostView(),
+            imageQuality, imageStrategy);
       }
+    } else {
+      DrawableStrategy drawableStrategy = new DrawableStrategy();
+      drawableStrategy.width = (int) getDomObject().getLayoutWidth();
+      drawableStrategy.height = (int) getDomObject().getLayoutHeight();
+      drawableStrategy.imageStrategy = imageStrategy;
+      drawableStrategy.imageQuality = imageQuality;
+      IDrawableLoader drawableLoader = getInstance().getDrawableLoader();
+      if (drawableLoader != null) {
+        drawableLoader.setDrawable(rewrited.toString(), getOrCreateFlatWidget(),
+            drawableStrategy);
+      }
+    }
+  }
+
+  @NonNull
+  private ImageListener createImageListener() {
+    return new ImageListener() {
+      @Override
+      public void onImageFinish(String url, ImageView imageView, boolean result, Map extra) {
+        if (getDomObject() != null && getDomObject().getEvents()
+            .contains(Constants.Event.ONLOAD)) {
+          Map<String, Object> params = new HashMap<String, Object>();
+          Map<String, Object> size = new HashMap<>(2);
+          if (imageView != null && imageView instanceof Measurable) {
+            size.put("naturalWidth", ((Measurable) imageView).getNaturalWidth());
+            size.put("naturalHeight", ((Measurable) imageView).getNaturalHeight());
+          } else {
+            size.put("naturalWidth", 0);
+            size.put("naturalHeight", 0);
+          }
+          if (getDomObject() != null && containsEvent(Constants.Event.ONLOAD)) {
+            params.put("success", result);
+            params.put("size", size);
+            fireEvent(Constants.Event.ONLOAD, params);
+          }
+        }
+      }
+    };
+  }
+
+  @NonNull
+  private WXImageStrategy createImageStrategy(int blurRadius) {
+    WXImageStrategy imageStrategy = new WXImageStrategy();
+    WXImageSharpen imageSharpen = getDomObject().getAttrs().getImageSharpen();
+    imageStrategy.isSharpen = imageSharpen == WXImageSharpen.SHARPEN;
+    imageStrategy.blurRadius = Math.max(0, blurRadius);
+    this.mBlurRadius = blurRadius;
+    String placeholder = null;
+    if (getDomObject().getAttrs().containsKey(Constants.Name.PLACEHOLDER)) {
+      placeholder = (String) getDomObject().getAttrs().get(Constants.Name.PLACEHOLDER);
+    } else if (getDomObject().getAttrs().containsKey(Constants.Name.PLACE_HOLDER)) {
+      placeholder = (String) getDomObject().getAttrs().get(Constants.Name.PLACE_HOLDER);
+    }
+    if (placeholder != null) {
+      imageStrategy.placeHolder = getInstance()
+          .rewriteUri(Uri.parse(placeholder), URIAdapter.IMAGE).toString();
+    }
+    return imageStrategy;
   }
 
   @Override
@@ -308,17 +368,29 @@ public class WXImage extends WXComponent<ImageView> {
     super.updateProperties(props);
     WXImageView imageView;
     ImmutableDomObject imageDom;
-    if ((imageDom = getDomObject()) != null &&
-        getHostView() instanceof WXImageView) {
-      imageView = (WXImageView) getHostView();
-      BorderDrawable borderDrawable = WXViewUtils.getBorderDrawable(imageView);
-      float[] borderRadius = extractBorderRadius(imageDom, borderDrawable);
-      imageView.setBorderRadius(borderRadius);
+    if ((imageDom = getDomObject()) != null) {
+      if(promoteToView(true)) {
+        if(getHostView() instanceof WXImageView){
+          imageView = (WXImageView) getHostView();
+          BorderDrawable borderDrawable = WXViewUtils.getBorderDrawable(imageView);
+          float[] borderRadius = extractBorderRadius(imageDom, borderDrawable);
+          imageView.setBorderRadius(borderRadius);
 
-      if (imageView.getDrawable() instanceof ImageDrawable) {
-        updateImageDrawable(borderRadius, (ImageDrawable) imageView.getDrawable());
+          if (imageView.getDrawable() instanceof ImageDrawable) {
+            updateImageDrawable(borderRadius, (ImageDrawable) imageView.getDrawable());
+          }
+          readyToRender();
+        }
       }
-      readyToRender();
+      else{
+        ImageWidget widget = getOrCreateFlatWidget();
+        float[] borderRadius = extractBorderRadius(getDomObject(), widget.getBackgroundAndBorder());
+        widget.setBorderRadius(borderRadius);
+        if(widget.getDrawable() instanceof ImageDrawable){
+          updateImageDrawable(borderRadius, (ImageDrawable) widget.getDrawable());
+        }
+        readyToRender();
+      }
     }
   }
 

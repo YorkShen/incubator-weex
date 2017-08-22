@@ -25,13 +25,13 @@ import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Layout;
-import android.view.ViewGroup;
-
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.annotation.Component;
 import com.taobao.weex.common.Constants;
 import com.taobao.weex.dom.WXDomObject;
 import com.taobao.weex.ui.ComponentCreator;
+import com.taobao.weex.ui.flat.FlatComponent;
+import com.taobao.weex.ui.flat.widget.TextWidget;
 import com.taobao.weex.ui.view.WXTextView;
 import com.taobao.weex.utils.FontDO;
 import com.taobao.weex.utils.TypefaceUtil;
@@ -43,7 +43,9 @@ import java.lang.reflect.InvocationTargetException;
  * Text component
  */
 @Component(lazyload = false)
-public class WXText extends WXComponent<WXTextView> {
+public class WXText extends WXComponent<WXTextView> implements FlatComponent<TextWidget> {
+
+  private TextWidget mTextWidget;
 
   /**
    * The default text size
@@ -51,6 +53,25 @@ public class WXText extends WXComponent<WXTextView> {
   public static final int sDEFAULT_SIZE = 32;
   private BroadcastReceiver mTypefaceObserver;
   private String mFontFamily;
+
+  @Override
+  public boolean promoteToView(boolean checkAncestor) {
+    return getInstance().getFlatUIContext().promoteToView(this, checkAncestor, WXText.class);
+  }
+
+  @Override
+  @NonNull
+  public TextWidget getOrCreateFlatWidget() {
+    if (mTextWidget == null) {
+      mTextWidget = new TextWidget(getInstance().getFlatUIContext().getFlatComponentAncestor(this).getHostView());
+    }
+    return mTextWidget;
+  }
+
+  @Override
+  public boolean isVirtualComponent() {
+    return !promoteToView(true);
+  }
 
   public static class Creator implements ComponentCreator {
 
@@ -78,11 +99,14 @@ public class WXText extends WXComponent<WXTextView> {
 
   @Override
   public void updateExtra(Object extra) {
-    if (extra instanceof Layout &&
-        getHostView() != null && !extra.equals(getHostView().getTextLayout())) {
+    if(extra instanceof Layout) {
       final Layout layout = (Layout) extra;
-      getHostView().setTextLayout(layout);
-      getHostView().invalidate();
+      if (!promoteToView(true)) {
+        getOrCreateFlatWidget().updateTextDrawable(layout);
+      } else if (getHostView() != null && !extra.equals(getHostView().getTextLayout())) {
+        getHostView().setTextLayout(layout);
+        getHostView().invalidate();
+      }
     }
   }
 
@@ -126,28 +150,6 @@ public class WXText extends WXComponent<WXTextView> {
     }
   }
 
-  /**
-   * Flush view no matter what height and width the {@link WXDomObject} specifies.
-   * @param extra must be a {@link Layout} object, otherwise, nothing will happen.
-   */
-  private void flushView(Object extra) {
-    if (extra instanceof Layout &&
-        getHostView() != null && !extra.equals(getHostView().getTextLayout())) {
-      final Layout layout = (Layout) extra;
-      /**The following if block change the height of the width of the textView.
-       * other part of the code is the same to updateExtra
-       */
-      ViewGroup.LayoutParams layoutParams = getHostView().getLayoutParams();
-      if (layoutParams != null) {
-        layoutParams.height = layout.getHeight();
-        layoutParams.width = layout.getWidth();
-        getHostView().setLayoutParams(layoutParams);
-      }
-      getHostView().setTextLayout(layout);
-      getHostView().invalidate();
-    }
-  }
-
   @Override
   protected Object convertEmptyProperty(String propName, Object originalValue) {
     switch (propName) {
@@ -157,6 +159,13 @@ public class WXText extends WXComponent<WXTextView> {
         return "black";
     }
     return super.convertEmptyProperty(propName, originalValue);
+  }
+
+  @Override
+  protected void createViewImpl() {
+    if(promoteToView(true)) {
+      super.createViewImpl();
+    }
   }
 
   @Override
