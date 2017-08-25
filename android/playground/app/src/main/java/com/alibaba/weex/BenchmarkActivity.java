@@ -27,8 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-
-import com.alibaba.weex.commons.adapter.ImageAdapter;
+import com.alibaba.weex.commons.adapter.DrawableLoader;
 import com.taobao.weex.IWXRenderListener;
 import com.taobao.weex.InitConfig;
 import com.taobao.weex.WXEnvironment;
@@ -36,7 +35,6 @@ import com.taobao.weex.WXSDKEngine;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.common.WXRenderStrategy;
 import com.taobao.weex.utils.WXFileUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,10 +77,14 @@ public class BenchmarkActivity extends AppCompatActivity implements IWXRenderLis
       }
     });
     WXEnvironment.isPerf = true;
+    DrawableLoader drawableLoader = new DrawableLoader(this);
     WXSDKEngine.addCustomOptions("appName", "WXSample");
     WXSDKEngine.addCustomOptions("appGroup", "WXApp");
     WXSDKEngine.initialize(getApplication(),
-                           new InitConfig.Builder().setImgAdapter(new ImageAdapter()).build());
+                           new InitConfig.Builder().
+                               setImgAdapter(drawableLoader).
+                               setDrawableLoader(drawableLoader).
+                               build());
   }
 
   @Override

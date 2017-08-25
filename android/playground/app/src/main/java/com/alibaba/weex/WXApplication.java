@@ -21,11 +21,9 @@ package com.alibaba.weex;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-
 import com.alibaba.weex.commons.adapter.DefaultWebSocketAdapterFactory;
-import com.alibaba.weex.commons.adapter.ImageAdapter;
+import com.alibaba.weex.commons.adapter.DrawableLoader;
 import com.alibaba.weex.commons.adapter.JSExceptionAdapter;
-import com.alibaba.weex.commons.adapter.PicassoBasedDrawableLoader;
 import com.alibaba.weex.extend.PlayDebugAdapter;
 import com.alibaba.weex.extend.adapter.InterceptWXHttpAdapter;
 import com.alibaba.weex.extend.component.RichText;
@@ -61,17 +59,18 @@ public class WXApplication extends Application {
      * Fresco.initialize(this,config);
      **/
 //    initDebugEnvironment(true, false, "DEBUG_SERVER_HOST");
+    DrawableLoader drawableLoader = new DrawableLoader(this);
     WXSDKEngine.addCustomOptions("appName", "WXSample");
     WXSDKEngine.addCustomOptions("appGroup", "WXApp");
     WXSDKEngine.initialize(this,
                            new InitConfig.Builder()
                                //.setImgAdapter(new FrescoImageAdapter())// use fresco adapter
-                               .setImgAdapter(new ImageAdapter())
+                               .setImgAdapter(drawableLoader)
                                .setDebugAdapter(new PlayDebugAdapter())
                                .setWebSocketAdapterFactory(new DefaultWebSocketAdapterFactory())
                                .setJSExceptionAdapter(new JSExceptionAdapter())
                                .setHttpAdapter(new InterceptWXHttpAdapter())
-                               .setDrawableLoader(new PicassoBasedDrawableLoader(this))
+                               .setDrawableLoader(drawableLoader)
                                .build()
                           );
 
