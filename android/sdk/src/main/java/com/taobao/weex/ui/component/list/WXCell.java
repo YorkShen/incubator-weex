@@ -20,17 +20,18 @@ package com.taobao.weex.ui.component.list;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.taobao.weex.WXSDKInstance;
 import com.taobao.weex.annotation.Component;
 import com.taobao.weex.common.Constants.Name;
+import com.taobao.weex.dom.WXAttr;
 import com.taobao.weex.dom.WXDomObject;
 import com.taobao.weex.ui.component.WXVContainer;
 import com.taobao.weex.ui.flat.WidgetContainer;
 import com.taobao.weex.ui.view.WXFrameLayout;
+import com.taobao.weex.utils.WXLogUtils;
 import com.taobao.weex.utils.WXUtils;
 
 /**
@@ -57,6 +58,14 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, boolean isLazy) {
         super(instance, dom, parent);
+        try {
+            WXAttr attr = getDomObject().getAttrs();
+            if (attr.containsKey(Name.FLAT)) {
+                mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
+            }
+        }catch (NullPointerException e){
+            WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
+        }
     }
 
     @Override
@@ -82,17 +91,6 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
             WXFrameLayout view = new WXFrameLayout(context);
             mRealView = view;
             return view;
-        }
-    }
-
-    @Override
-    protected boolean setProperty(String key, Object param) {
-        if(TextUtils.equals(Name.FLAT, key)){
-            getInstance().getFlatUIContext().setFlatUIEnabled(WXUtils.getBoolean(param, false));
-            return true;
-        }
-        else {
-            return super.setProperty(key, param);
         }
     }
 
@@ -156,7 +154,6 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     @Override
     public boolean intendToBeFlatContainer() {
-        //TODO Is it possible to remove the cell class judge
         return getInstance().getFlatUIContext().isFlatUIEnabled() && WXCell.class.equals(getClass()) && !isSticky();
     }
 }

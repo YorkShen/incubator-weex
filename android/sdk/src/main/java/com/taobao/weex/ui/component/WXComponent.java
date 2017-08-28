@@ -35,6 +35,8 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
+import android.support.annotation.RestrictTo.Scope;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -136,6 +138,8 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
   private boolean mIsDisabled = false;
   private int mType = TYPE_COMMON;
   private boolean mNeedLayoutOnAnimation = false;
+  @RestrictTo(Scope.LIBRARY)
+  protected boolean mFlatUIEnabled = false;
 
   public WXTracing.TraceInfo mTraceInfo = new WXTracing.TraceInfo();
 
@@ -145,6 +149,12 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
   //Holding the animation bean when component is uninitialized
   public void postAnimation(WXAnimationModule.AnimationHolder holder) {
     this.mAnimationHolder = holder;
+  }
+
+  //This method will be removed once flatGUI is completed.
+  @RestrictTo(Scope.LIBRARY)
+  public boolean isFlatUIEnabled(){
+    return mFlatUIEnabled;
   }
 
   private OnClickListener mClickEventListener = new OnClickListener() {
