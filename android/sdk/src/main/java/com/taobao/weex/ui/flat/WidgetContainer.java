@@ -51,7 +51,7 @@ public abstract class WidgetContainer<T extends ViewGroup> extends WXVContainer<
 
   @Override
   public void createChildViewAt(int index) {
-    if (intendToBeFlatContainer()) {
+    if (intendToBeFlatContainer() && getRealView()!=null) {
       Pair<WXComponent, Integer> ret = rearrangeIndexAndGetChild(index);
       if (ret.first != null) {
         WXComponent child = ret.first;
