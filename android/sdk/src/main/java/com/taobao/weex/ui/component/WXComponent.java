@@ -522,7 +522,7 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
     }
     widget.setLayout(width, height, left, right, top, bottom, childOffset);
 
-    if (widget instanceof AndroidViewWidget) {
+    if (widget instanceof AndroidViewWidget && ((AndroidViewWidget) widget).getView()!=null) {
       //TODO generic method if ever possible
       setHostLayoutParams((T) ((AndroidViewWidget) widget).getView(),
           width, height, childOffset.x, right, childOffset.y, bottom);
