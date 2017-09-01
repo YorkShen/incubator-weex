@@ -94,7 +94,7 @@ public class WXImage extends WXComponent<ImageView> implements FlatComponent<Ima
   @Override
   @NonNull public ImageWidget getOrCreateFlatWidget() {
     if(imageWidget == null){
-      imageWidget = new ImageWidget(getInstance().getFlatUIContext().getFlatComponentAncestor(this).getHostView());
+      imageWidget = new ImageWidget(getInstance().getFlatUIContext());
     }
     return imageWidget;
   }
