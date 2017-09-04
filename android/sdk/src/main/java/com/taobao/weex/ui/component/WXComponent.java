@@ -70,8 +70,8 @@ import com.taobao.weex.ui.component.pesudo.OnActivePseudoListner;
 import com.taobao.weex.ui.component.pesudo.PesudoStatus;
 import com.taobao.weex.ui.component.pesudo.TouchActivePseudoListener;
 import com.taobao.weex.ui.flat.FlatComponent;
-import com.taobao.weex.ui.flat.WidgetContainer;
 import com.taobao.weex.ui.flat.FlatGUIIContext;
+import com.taobao.weex.ui.flat.WidgetContainer;
 import com.taobao.weex.ui.flat.widget.AndroidViewWidget;
 import com.taobao.weex.ui.flat.widget.Widget;
 import com.taobao.weex.ui.view.border.BorderDrawable;
@@ -138,8 +138,6 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
   private boolean mIsDisabled = false;
   private int mType = TYPE_COMMON;
   private boolean mNeedLayoutOnAnimation = false;
-  @RestrictTo(Scope.LIBRARY)
-  protected boolean mFlatUIEnabled = false;
 
   public WXTracing.TraceInfo mTraceInfo = new WXTracing.TraceInfo();
 
@@ -154,7 +152,7 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
   //This method will be removed once flatGUI is completed.
   @RestrictTo(Scope.LIBRARY)
   public boolean isFlatUIEnabled(){
-    return mFlatUIEnabled;
+    return mParent != null && mParent.isFlatUIEnabled();
   }
 
   private OnClickListener mClickEventListener = new OnClickListener() {

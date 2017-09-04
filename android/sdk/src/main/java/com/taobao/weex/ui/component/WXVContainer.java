@@ -256,7 +256,6 @@ public abstract class WXVContainer<T extends ViewGroup> extends WXComponent<T> {
     if (child == null || index < -1) {
       return;
     }
-    child.mFlatUIEnabled = mFlatUIEnabled;
     int count = mChildren.size();
     index = index >= count ? -1 : index;
     if (index == -1) {
