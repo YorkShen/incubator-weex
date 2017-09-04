@@ -124,9 +124,10 @@ public class FlatGUIIContext {
           attr.containsKey(Name.ARIA_LABEL) ||
           attr.containsKey(WXComponent.PROP_FIXED_SIZE) ||
           style.containsKey(Name.VISIBILITY) ||
-          style.containsKey(Name.POSITION) ||
           attr.containsKey(Name.DISABLED) ||
           attr.containsKey(Name.PREVENT_MOVE_EVENT) ||
+          style.isFixed() ||
+          style.isSticky() ||
           !style.getPesudoStyles().isEmpty() ||
           domObject.getEvents().size() > 0) {
         ret = true;
