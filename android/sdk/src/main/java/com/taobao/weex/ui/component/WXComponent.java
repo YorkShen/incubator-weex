@@ -506,7 +506,7 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
     if (mParent != null) {
       if (mParent instanceof FlatComponent &&
           UIImp.getFlatComponentAncestor(mParent) != null &&
-          UIImp.getAndroidViewWidget(mParent) != null) {
+          UIImp.getAndroidViewWidget(mParent) == null) {
         childOffset.set(rawoffset.x, rawoffset.y);
       } else {
         childOffset.set(left, top);
