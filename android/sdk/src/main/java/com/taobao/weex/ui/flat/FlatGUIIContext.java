@@ -120,7 +120,6 @@ public class FlatGUIIContext {
           attr.containsKey(WXComponent.PROP_FIXED_SIZE) ||
           style.containsKey(Name.VISIBILITY) ||
           attr.containsKey(Name.DISABLED) ||
-          attr.containsKey(Name.PREVENT_MOVE_EVENT) ||
           style.isFixed() ||
           style.isSticky() ||
           !style.getPesudoStyles().isEmpty() ||
