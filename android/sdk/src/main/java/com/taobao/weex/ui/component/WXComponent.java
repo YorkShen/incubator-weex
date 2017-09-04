@@ -504,10 +504,11 @@ public abstract class  WXComponent<T extends View> implements IWXObject, IWXActi
       int width, int height, int left, int right, int top, int bottom) {
     Point childOffset = new Point();
     if (mParent != null) {
-      if(mParent instanceof FlatComponent && UIImp.getFlatComponentAncestor(mParent) != null){
+      if (mParent instanceof FlatComponent &&
+          UIImp.getFlatComponentAncestor(mParent) != null &&
+          UIImp.getAndroidViewWidget(mParent) != null) {
         childOffset.set(rawoffset.x, rawoffset.y);
-      }
-      else{
+      } else {
         childOffset.set(left, top);
       }
 
