@@ -20,6 +20,8 @@ package com.taobao.weex.ui.component.list;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.RestrictTo;
+import android.support.annotation.RestrictTo.Scope;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -49,7 +51,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     /** used in list sticky detect **/
     private int mScrollPositon = -1;
-
+    private boolean mFlatUIEnabled = false;
 
     @Deprecated
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, String instanceId, boolean isLazy) {
@@ -75,6 +77,12 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     public void lazy(boolean lazy) {
         mLazy = lazy;
+    }
+
+    @Override
+    @RestrictTo(Scope.LIBRARY)
+    public boolean isFlatUIEnabled() {
+        return mFlatUIEnabled;
     }
 
     /**
@@ -154,6 +162,6 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     @Override
     public boolean intendToBeFlatContainer() {
-        return getInstance().getFlatUIContext().isFlatUIEnabled() && WXCell.class.equals(getClass()) && !isSticky();
+        return getInstance().getFlatUIContext().isFlatUIEnabled(this) && WXCell.class.equals(getClass()) && !isSticky();
     }
 }
