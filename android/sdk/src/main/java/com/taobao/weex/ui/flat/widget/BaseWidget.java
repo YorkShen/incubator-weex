@@ -119,6 +119,7 @@ abstract class BaseWidget implements Widget {
   @Override
   public final void draw(@NonNull Canvas canvas) {
     canvas.save();
+    //TODO clip according to path, not borderBox.w
     canvas.clipRect(borderBox);
     canvas.translate(borderBox.left, borderBox.top);
     if (backgroundBorder != null) {

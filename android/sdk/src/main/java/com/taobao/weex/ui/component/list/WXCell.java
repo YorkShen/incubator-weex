@@ -61,6 +61,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, boolean isLazy) {
         super(instance, dom, parent);
         try {
+            //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
             WXAttr attr = getDomObject().getAttrs();
             if (attr.containsKey(Name.FLAT)) {
                 mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
