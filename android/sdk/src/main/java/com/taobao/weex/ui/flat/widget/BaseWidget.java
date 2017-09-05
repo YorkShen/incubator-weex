@@ -132,11 +132,12 @@ abstract class BaseWidget implements Widget {
 
   @Override
   public void invalidate() {
-    Rect dirtyRegion = new Rect(borderBox);
-    dirtyRegion.offset(offsetOfContainer.x, offsetOfContainer.y);
+    //TODO parital invalidate doesn't work as expecetd, which need to be fixed in the future.
+//    Rect dirtyRegion = new Rect(borderBox);
+//    dirtyRegion.offset(offsetOfContainer.x, offsetOfContainer.y);
     View widgetContainer;
     if ((widgetContainer = context.getWidgetContainerView(this)) != null) {
-      widgetContainer.invalidate(dirtyRegion);
+      widgetContainer.invalidate();
     }
   }
 
