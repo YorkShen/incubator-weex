@@ -28,7 +28,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
 import android.view.View;
-import com.taobao.weex.ui.flat.FlatGUIIContext;
+import com.taobao.weex.ui.flat.FlatGUIContext;
 import com.taobao.weex.ui.view.border.BorderDrawable;
 
 @RestrictTo(Scope.LIBRARY)
@@ -40,9 +40,10 @@ abstract class BaseWidget implements Widget {
   private int leftOffset, topOffset, rightOffset, bottomOffset;
   private Rect borderBox = new Rect();
   private Point offsetOfContainer = new Point();
-  private final @NonNull FlatGUIIContext context;
+  private final @NonNull
+  FlatGUIContext context;
 
-  BaseWidget(@NonNull FlatGUIIContext context){
+  BaseWidget(@NonNull FlatGUIContext context){
     this.context = context;
   }
 

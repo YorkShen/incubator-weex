@@ -40,15 +40,14 @@ import java.util.Map;
 //TODO The constructor of FlatGUIContext should have a flag decide whether to enable flagGUI.
 
 @RestrictTo(Scope.LIBRARY)
-public class FlatGUIIContext {
+public class FlatGUIContext {
 
-  private boolean mFlatUIEnabled = true;
   private Map<WXComponent, WidgetContainer> mWidgetRegistry = new ArrayMap<>();
   private Map<WXComponent, AndroidViewWidget> mViewWidgetRegistry = new ArrayMap<>();
   private Map<Widget, WXComponent> widgetToComponent = new ArrayMap<>();
 
   public boolean isFlatUIEnabled(WXComponent component) {
-    return mFlatUIEnabled && component.isFlatUIEnabled();
+    return component.isFlatUIEnabled();
   }
 
   public void register(@NonNull WXComponent descendant, @NonNull WidgetContainer ancestor) {
