@@ -54,6 +54,14 @@ public class AndroidViewWidget extends BaseWidget {
     }
   }
 
+  @Override
+  public void invalidate() {
+    super.invalidate();
+    if (mView != null) {
+      mView.invalidate();
+    }
+  }
+
   public @Nullable View getView() {
     return mView;
   }
