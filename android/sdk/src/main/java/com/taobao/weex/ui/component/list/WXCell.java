@@ -51,7 +51,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     /** used in list sticky detect **/
     private int mScrollPositon = -1;
-    private boolean mFlatUIEnabled = false;
+    private boolean mFlatUIEnabled = true;
 
     @Deprecated
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, String instanceId, boolean isLazy) {
@@ -64,7 +64,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
             //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
             WXAttr attr = getDomObject().getAttrs();
             if (attr.containsKey(Name.FLAT)) {
-                mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
+                mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), true);
             }
         }catch (NullPointerException e){
             WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
