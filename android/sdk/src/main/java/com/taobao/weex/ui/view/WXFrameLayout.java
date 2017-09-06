@@ -47,7 +47,6 @@ public class WXFrameLayout extends FrameLayout implements WXGestureObservable,IR
 
   public WXFrameLayout(Context context) {
     super(context);
-    setWillNotDraw(false);
   }
 
   @Override
@@ -77,15 +76,15 @@ public class WXFrameLayout extends FrameLayout implements WXGestureObservable,IR
 
   public void mountFlatGUI(List<Widget> widgets){
     this.mWidgets = widgets;
-//    if (mWidgets != null) {
-//      setWillNotDraw(true);
-//    }
+    if (mWidgets != null) {
+      setWillNotDraw(true);
+    }
     invalidate();
   }
 
   public void unmountFlatGUI(){
     mWidgets = null;
-    //setWillNotDraw(false);
+    setWillNotDraw(false);
     invalidate();
   }
 
