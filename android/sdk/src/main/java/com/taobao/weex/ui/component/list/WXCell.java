@@ -19,6 +19,8 @@
 package com.taobao.weex.ui.component.list;
 
 import android.content.Context;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
@@ -51,7 +53,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     /** used in list sticky detect **/
     private int mScrollPositon = -1;
-    private boolean mFlatUIEnabled = true;
+    private boolean mFlatUIEnabled = false;
 
     @Deprecated
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, String instanceId, boolean isLazy) {
@@ -60,14 +62,16 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, boolean isLazy) {
         super(instance, dom, parent);
-        try {
-            //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
-            WXAttr attr = getDomObject().getAttrs();
-            if (attr.containsKey(Name.FLAT)) {
-                mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), true);
+        if(VERSION.SDK_INT< VERSION_CODES.LOLLIPOP) {
+            try {
+                //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
+                WXAttr attr = getDomObject().getAttrs();
+                if (attr.containsKey(Name.FLAT)) {
+                    mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
+                }
+            } catch (NullPointerException e) {
+                WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
             }
-        }catch (NullPointerException e){
-            WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
         }
     }
 
