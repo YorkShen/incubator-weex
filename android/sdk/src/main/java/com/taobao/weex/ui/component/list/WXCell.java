@@ -19,7 +19,7 @@
 package com.taobao.weex.ui.component.list;
 
 import android.content.Context;
-import android.os.Build.VERSION;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
@@ -62,7 +62,7 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, boolean isLazy) {
         super(instance, dom, parent);
-        if(VERSION.SDK_INT< VERSION_CODES.LOLLIPOP) {
+        if(Build.VERSION.SDK_INT< VERSION_CODES.LOLLIPOP) {
             try {
                 //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
                 WXAttr attr = getDomObject().getAttrs();
