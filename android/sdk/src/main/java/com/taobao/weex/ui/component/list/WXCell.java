@@ -95,10 +95,17 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
             WXFrameLayout view = new WXFrameLayout(context);
             mRealView = new WXFrameLayout(context);
             view.addView(mRealView);
+            //TODO Maybe there is a better solution for hardware-acceleration view's display list.
+            if (isFlatUIEnabled()) {
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
             return view;
         } else {
             WXFrameLayout view = new WXFrameLayout(context);
             mRealView = view;
+            if (isFlatUIEnabled()) {
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
             return view;
         }
     }
