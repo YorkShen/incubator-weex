@@ -47,6 +47,7 @@ public class WXFrameLayout extends FrameLayout implements WXGestureObservable,IR
 
   public WXFrameLayout(Context context) {
     super(context);
+    setLayerType(LAYER_TYPE_HARDWARE, null);
   }
 
   @Override
