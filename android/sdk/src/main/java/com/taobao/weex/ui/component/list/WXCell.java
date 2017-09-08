@@ -19,6 +19,8 @@
 package com.taobao.weex.ui.component.list;
 
 import android.content.Context;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
@@ -60,13 +62,16 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
 
     public WXCell(WXSDKInstance instance, WXDomObject dom, WXVContainer parent, boolean isLazy) {
         super(instance, dom, parent);
-        try {
-            WXAttr attr = getDomObject().getAttrs();
-            if (attr.containsKey(Name.FLAT)) {
-                mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
+        if(Build.VERSION.SDK_INT< VERSION_CODES.LOLLIPOP) {
+            try {
+                //TODO a WTF is necessary if anyone try to change the flat flag during update attrs.
+                WXAttr attr = getDomObject().getAttrs();
+                if (attr.containsKey(Name.FLAT)) {
+                    mFlatUIEnabled = WXUtils.getBoolean(attr.get(Name.FLAT), false);
+                }
+            } catch (NullPointerException e) {
+                WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
             }
-        }catch (NullPointerException e){
-            WXLogUtils.e("Cell", WXLogUtils.getStackTrace(e));
         }
     }
 
@@ -94,10 +99,17 @@ public class WXCell extends WidgetContainer<WXFrameLayout> {
             WXFrameLayout view = new WXFrameLayout(context);
             mRealView = new WXFrameLayout(context);
             view.addView(mRealView);
+            //TODO Maybe there is a better solution for hardware-acceleration view's display list.
+            if (isFlatUIEnabled()) {
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
             return view;
         } else {
             WXFrameLayout view = new WXFrameLayout(context);
             mRealView = view;
+            if (isFlatUIEnabled()) {
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
             return view;
         }
     }
