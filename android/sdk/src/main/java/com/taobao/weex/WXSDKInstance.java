@@ -1249,38 +1249,40 @@ public class WXSDKInstance implements IWXActivityStateListener,DomContext, View.
   }
 
   public synchronized void destroy() {
-    WXSDKManager.getInstance().destroyInstance(mInstanceId);
-    WXComponentFactory.removeComponentTypesByInstanceId(getInstanceId());
+    if(!isDestroy()) {
+      WXSDKManager.getInstance().destroyInstance(mInstanceId);
+      WXComponentFactory.removeComponentTypesByInstanceId(getInstanceId());
 
-    if(mGlobalEventReceiver!=null){
-      getContext().unregisterReceiver(mGlobalEventReceiver);
-      mGlobalEventReceiver=null;
-    }
-    if(mRootComp != null ) {
-      mRootComp.destroy();
-      destroyView(mRenderContainer);
-      mRenderContainer = null;
-      mRootComp = null;
-    }
+      if (mGlobalEventReceiver != null) {
+        getContext().unregisterReceiver(mGlobalEventReceiver);
+        mGlobalEventReceiver = null;
+      }
+      if (mRootComp != null) {
+        mRootComp.destroy();
+        destroyView(mRenderContainer);
+        mRenderContainer = null;
+        mRootComp = null;
+      }
 
-    if(mGlobalEvents!=null){
-      mGlobalEvents.clear();
-    }
+      if (mGlobalEvents != null) {
+        mGlobalEvents.clear();
+      }
 
-    if(mComponentObserver != null){
+      if (mComponentObserver != null) {
         mComponentObserver = null;
+      }
+
+      getFlatUIContext().destroy();
+      mFlatGUIContext = null;
+
+      mNestedInstanceInterceptor = null;
+      mUserTrackAdapter = null;
+      mScrollView = null;
+      mContext = null;
+      mRenderListener = null;
+      isDestroy = true;
+      mStatisticsListener = null;
     }
-
-    getFlatUIContext().destroy();
-    mFlatGUIContext = null;
-
-    mNestedInstanceInterceptor = null;
-    mUserTrackAdapter = null;
-    mScrollView = null;
-    mContext = null;
-    mRenderListener = null;
-    isDestroy = true;
-    mStatisticsListener = null;
   }
 
   public boolean isDestroy(){
