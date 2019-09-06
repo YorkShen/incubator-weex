@@ -298,6 +298,7 @@ install {
                 packaging 'aar'
                 name 'weex_sdk'
                 url siteUrl
+                //groupId 'org.apache.weex'
                 licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'
