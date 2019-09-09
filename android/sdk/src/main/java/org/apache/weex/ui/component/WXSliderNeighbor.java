@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.WXThread;
 import org.apache.weex.ui.view.BaseFrameLayout;
 import org.apache.weex.ui.view.WXCircleIndicator;

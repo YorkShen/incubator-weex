@@ -18,6 +18,7 @@
  */
 package org.apache.weex.common;
 
+import com.taobao.weex.common.WXModuleAnno;
 import org.apache.weex.WXEnvironment;
 import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.Invoker;

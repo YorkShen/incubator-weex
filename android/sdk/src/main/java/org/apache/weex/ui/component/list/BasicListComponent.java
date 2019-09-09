@@ -56,7 +56,7 @@ import org.apache.weex.ui.component.AppearanceHelper;
 import org.apache.weex.ui.component.Scrollable;
 import org.apache.weex.ui.component.WXBaseRefresh;
 import org.apache.weex.ui.component.WXComponent;
-import org.apache.weex.ui.component.WXComponentProp;
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.ui.component.WXHeader;
 import org.apache.weex.ui.component.WXLoading;
 import org.apache.weex.ui.component.WXRefresh;

@@ -51,7 +51,7 @@ import org.apache.weex.ui.flat.widget.WidgetGroup;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.component.WXComponent;
 import org.apache.weex.ui.view.border.BorderDrawable;
 import java.lang.annotation.Retention;

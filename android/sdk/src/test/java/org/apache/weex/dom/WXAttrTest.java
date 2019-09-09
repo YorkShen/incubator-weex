@@ -22,10 +22,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
+import com.taobao.weex.dom.WXImageQuality;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.Constants.Name;
 import org.apache.weex.common.Constants.Value;
-import org.apache.weex.common.WXImageSharpen;
+import com.taobao.weex.common.WXImageSharpen;
 import com.taobao.weappplus_sdk.BuildConfig;
 import org.apache.weex.utils.WXViewUtils;
 import org.junit.After;

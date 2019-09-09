@@ -19,6 +19,7 @@
 package org.apache.weex.common;
 
 
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.WXEnvironment;
 
 import java.util.Map;

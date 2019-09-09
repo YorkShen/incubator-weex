@@ -24,7 +24,7 @@ import android.text.TextUtils;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.base.CalledByNative;
+import com.taobao.weex.base.CalledByNative;
 import org.apache.weex.bridge.WXBridgeManager.BundType;
 import org.apache.weex.common.WXRequest;
 import org.apache.weex.common.WXResponse;
@@ -34,7 +34,7 @@ import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.WXHttpListener;
 import org.apache.weex.adapter.IWXHttpAdapter;
 import org.apache.weex.adapter.URIAdapter;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 
 import java.util.HashMap;
 import java.util.Locale;

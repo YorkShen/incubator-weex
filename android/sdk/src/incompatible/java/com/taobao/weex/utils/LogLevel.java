@@ -16,16 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.weex.ui.component;
+package com.taobao.weex.utils;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.util.Log;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface WXComponentProp {
+/**
+ * Created by lixinke on 16/5/11.
+ */
+public enum LogLevel {
+  OFF("off",8, Log.ASSERT),
+  WTF("wtf", 7, Log.ASSERT),
+  TLOG("tlog",6,Log.ERROR), //Add For Son Process
+  ERROR("error", 5, Log.ERROR),
+  WARN("warn", 4, Log.WARN),
+  INFO("info", 3, Log.INFO),
+  DEBUG("debug", 2, Log.DEBUG),
+  VERBOSE("verbose", 1, Log.VERBOSE),
+  ALL("all", 0, Log.VERBOSE),;
+  String name;
+  int value;
+  int priority;
 
-  String name();
+  LogLevel(String name, int value,int priority) {
+    this.name = name;
+    this.value = value;
+    this.priority = priority;
+  }
+  public String getName(){
+    return name;
+  }
+  public int getValue(){
+    return value;
+  }
+  public int getPriority(){
+    return priority;
+  }
+  public int compare(LogLevel level){
+    return value-level.value;
+  }
 }

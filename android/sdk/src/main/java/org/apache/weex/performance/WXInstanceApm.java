@@ -21,7 +21,7 @@ package org.apache.weex.performance;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKManager;
 import org.apache.weex.common.WXPerformance;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.utils.WXExceptionUtils;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.utils.WXUtils;
@@ -38,7 +38,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.bridge.WXBridgeManager;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.component.WXComponent;
 
 public class WXInstanceApm {

@@ -20,7 +20,7 @@ package org.apache.weex.ui.action;
 
 import android.support.annotation.NonNull;
 import org.apache.weex.common.RenderTypes;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.performance.WXInstanceApm;
 import org.apache.weex.ui.component.WXComponent;

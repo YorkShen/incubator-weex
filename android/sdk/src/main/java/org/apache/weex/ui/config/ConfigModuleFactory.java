@@ -26,7 +26,7 @@ import org.apache.weex.bridge.Invoker;
 import org.apache.weex.bridge.MethodInvoker;
 import org.apache.weex.bridge.ModuleFactory;
 import org.apache.weex.common.WXModule;
-import org.apache.weex.common.WXModuleAnno;
+import com.taobao.weex.common.WXModuleAnno;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;

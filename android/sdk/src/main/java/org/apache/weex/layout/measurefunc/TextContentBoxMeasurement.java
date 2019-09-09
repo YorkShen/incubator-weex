@@ -49,7 +49,7 @@ import org.apache.weex.layout.ContentBoxMeasurement;
 import org.apache.weex.layout.MeasureMode;
 import org.apache.weex.ui.component.WXComponent;
 import org.apache.weex.ui.component.WXText;
-import org.apache.weex.ui.component.WXTextDecoration;
+import com.taobao.weex.ui.component.WXTextDecoration;
 import org.apache.weex.utils.WXDomUtils;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.utils.WXResourceUtils;

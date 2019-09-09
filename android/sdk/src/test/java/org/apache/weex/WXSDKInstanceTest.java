@@ -27,7 +27,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import org.apache.weex.bridge.WXBridgeManagerTest;
 import org.apache.weex.common.WXPerformance;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.dom.WXDomManagerTest;
 import org.apache.weex.ui.component.WXComponentFactory;
 import org.apache.weex.ui.component.WXDivTest;

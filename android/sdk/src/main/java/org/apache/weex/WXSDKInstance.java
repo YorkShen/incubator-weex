@@ -18,7 +18,7 @@
  */
 package org.apache.weex;
 
-import static org.apache.weex.common.WXErrorCode.WX_ERR_RELOAD_PAGE;
+import static com.taobao.weex.common.WXErrorCode.WX_ERR_RELOAD_PAGE;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -54,7 +54,7 @@ import org.apache.weex.common.WXConfig;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.common.WXPerformance;
 import org.apache.weex.common.WXRefreshData;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.common.WXRequest;
 import org.apache.weex.dom.WXEvent;
 import org.apache.weex.http.WXHttpUtil;
@@ -89,7 +89,7 @@ import org.apache.weex.adapter.IWXJscProcessManager;
 import org.apache.weex.adapter.IWXUserTrackAdapter;
 import org.apache.weex.adapter.URIAdapter;
 import org.apache.weex.bridge.WXBridgeManager;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.render.WXAbstractRenderContainer;
 import org.apache.weex.ui.component.WXComponent;
 import org.apache.weex.ui.component.WXEmbed;

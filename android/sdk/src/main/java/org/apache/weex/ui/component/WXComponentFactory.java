@@ -22,7 +22,7 @@ import android.text.TextUtils;
 
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.IFComponentHolder;
 import org.apache.weex.ui.WXComponentRegistry;
 import org.apache.weex.ui.action.BasicComponentData;

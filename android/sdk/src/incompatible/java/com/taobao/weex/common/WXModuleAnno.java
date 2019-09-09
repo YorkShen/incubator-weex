@@ -16,42 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.weex.utils;
+package com.taobao.weex.common;
 
-import android.util.Log;
+import com.taobao.weex.annotation.JSMethod;
 
-/**
- * Created by lixinke on 16/5/11.
- */
-public enum LogLevel {
-  OFF("off",8, Log.ASSERT),
-  WTF("wtf", 7, Log.ASSERT),
-  TLOG("tlog",6,Log.ERROR), //Add For Son Process
-  ERROR("error", 5, Log.ERROR),
-  WARN("warn", 4, Log.WARN),
-  INFO("info", 3, Log.INFO),
-  DEBUG("debug", 2, Log.DEBUG),
-  VERBOSE("verbose", 1, Log.VERBOSE),
-  ALL("all", 0, Log.VERBOSE),;
-  String name;
-  int value;
-  int priority;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-  LogLevel(String name, int value,int priority) {
-    this.name = name;
-    this.value = value;
-    this.priority = priority;
-  }
-  public String getName(){
-    return name;
-  }
-  public int getValue(){
-    return value;
-  }
-  public int getPriority(){
-    return priority;
-  }
-  public int compare(LogLevel level){
-    return value-level.value;
-  }
+/** Use {@link JSMethod} instead. **/
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+@Deprecated
+public @interface WXModuleAnno {
+
+  @Deprecated
+  boolean moduleMethod() default true;
+
+  boolean runOnUIThread() default true;
 }

@@ -26,7 +26,7 @@ import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 import android.view.Choreographer;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import java.lang.ref.WeakReference;
 
 public class WeexFrameRateControl {

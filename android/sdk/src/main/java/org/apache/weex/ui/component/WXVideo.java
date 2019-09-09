@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.common.Constants;

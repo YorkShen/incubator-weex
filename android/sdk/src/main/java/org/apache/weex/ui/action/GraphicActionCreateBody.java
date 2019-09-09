@@ -21,7 +21,7 @@ package org.apache.weex.ui.action;
 import android.support.annotation.NonNull;
 import android.widget.ScrollView;
 
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.dom.transition.WXTransition;
 import org.apache.weex.ui.component.WXScroller;
 import org.apache.weex.utils.WXLogUtils;

@@ -19,7 +19,7 @@
 package org.apache.weex.bridge;
 
 import org.apache.weex.WXEnvironment;
-import org.apache.weex.base.CalledByNative;
+import com.taobao.weex.base.CalledByNative;
 import org.apache.weex.utils.WXLogUtils;
 
 import java.io.Serializable;

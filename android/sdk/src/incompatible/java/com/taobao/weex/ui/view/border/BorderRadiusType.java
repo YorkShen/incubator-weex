@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,6 +17,21 @@
  * under the License.
  */
 
-package org.apache.weex.base;
-public @interface CalledByNative {
+package com.taobao.weex.ui.view.border;
+
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import org.apache.weex.ui.view.border.BorderDrawable;
+
+@Retention(RetentionPolicy.SOURCE)
+@IntDef({
+    BorderDrawable.BORDER_TOP_LEFT_RADIUS,
+    BorderDrawable.BORDER_TOP_RIGHT_RADIUS,
+    BorderDrawable.BORDER_BOTTOM_RIGHT_RADIUS,
+    BorderDrawable.BORDER_BOTTOM_LEFT_RADIUS,
+    BorderDrawable.BORDER_RADIUS_ALL})
+public @interface BorderRadiusType {
+
 }

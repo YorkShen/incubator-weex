@@ -26,7 +26,7 @@ import android.view.View;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
 import org.apache.weex.common.Constants;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.component.WXComponent;
 import org.apache.weex.ui.component.WXDiv;
 import org.apache.weex.ui.view.gesture.WXGesture;

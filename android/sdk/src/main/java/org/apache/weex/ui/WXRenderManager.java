@@ -27,7 +27,7 @@ import android.text.TextUtils;
 import org.apache.weex.common.WXRuntimeException;
 import org.apache.weex.common.WXThread;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.dom.RenderContext;
 import org.apache.weex.performance.WXInstanceApm;
 import org.apache.weex.ui.action.BasicGraphicAction;

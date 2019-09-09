@@ -22,6 +22,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.ui.component.list.WXListComponent;
 import org.apache.weex.ui.view.WXFrameLayout;

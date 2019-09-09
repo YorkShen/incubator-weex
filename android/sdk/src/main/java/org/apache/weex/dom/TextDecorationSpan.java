@@ -24,7 +24,7 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
-import org.apache.weex.ui.component.WXTextDecoration;
+import com.taobao.weex.ui.component.WXTextDecoration;
 
 public class TextDecorationSpan extends CharacterStyle
     implements UpdateAppearance {

@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.taobao.weex.base.CalledByNative;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -38,7 +39,7 @@ public class SystemMessageHandler extends Handler implements Serializable {
 
     private native void nativeRunWork(long delegateNative);
 
-    private SystemMessageHandler(long messagePumpDelegateNative) {
+    protected SystemMessageHandler(long messagePumpDelegateNative) {
         this.mMessagePumpDelegateNative = messagePumpDelegateNative;
         try {
             Class<?> messageClass = Class.forName("android.os.Message");

@@ -40,6 +40,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.WXThread;
 import org.apache.weex.layout.ContentBoxMeasurement;

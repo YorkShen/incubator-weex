@@ -65,7 +65,7 @@ import org.apache.weex.bridge.WXBridgeManager;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.Constants.Event;
 import org.apache.weex.common.IWXObject;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.common.WXPerformance;
 import org.apache.weex.common.WXRuntimeException;
 import org.apache.weex.dom.CSSShorthand;

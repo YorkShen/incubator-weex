@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.ui.view.BaseFrameLayout;
 import org.apache.weex.ui.view.WXCircleIndicator;

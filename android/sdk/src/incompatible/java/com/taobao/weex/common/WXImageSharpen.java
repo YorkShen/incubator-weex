@@ -16,21 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.taobao.weex.common;
 
-package org.apache.weex.ui.view.border;
-
-import android.support.annotation.IntDef;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@Retention(RetentionPolicy.SOURCE)
-@IntDef({
-    BorderDrawable.BORDER_TOP_LEFT_RADIUS,
-    BorderDrawable.BORDER_TOP_RIGHT_RADIUS,
-    BorderDrawable.BORDER_BOTTOM_RIGHT_RADIUS,
-    BorderDrawable.BORDER_BOTTOM_LEFT_RADIUS,
-    BorderDrawable.BORDER_RADIUS_ALL})
-public @interface BorderRadiusType {
-
+public enum WXImageSharpen {
+  UNSHARPEN,
+  SHARPEN
 }

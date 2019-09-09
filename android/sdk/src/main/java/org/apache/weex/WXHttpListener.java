@@ -21,9 +21,9 @@ package org.apache.weex;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.common.WXPerformance;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.common.WXResponse;
 import org.apache.weex.performance.WXInstanceApm;
 import org.apache.weex.tracing.WXTracing;

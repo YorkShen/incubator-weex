@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.dom.transition.WXTransition;
 import org.apache.weex.performance.WXAnalyzerDataTransfer;
 import org.apache.weex.performance.WXStateRecord;

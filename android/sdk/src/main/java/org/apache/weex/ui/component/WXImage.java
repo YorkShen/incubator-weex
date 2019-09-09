@@ -20,13 +20,14 @@ package org.apache.weex.ui.component;
 
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.Constants;
-import org.apache.weex.common.WXImageSharpen;
+import com.taobao.weex.common.WXImageSharpen;
 import org.apache.weex.common.WXImageStrategy;
 import org.apache.weex.common.WXRuntimeException;
 import org.apache.weex.ui.view.WXImageView;
-import org.apache.weex.dom.WXImageQuality;
+import com.taobao.weex.dom.WXImageQuality;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;

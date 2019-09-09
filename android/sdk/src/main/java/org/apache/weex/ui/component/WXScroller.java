@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.ICheckBindingScroller;
 import org.apache.weex.common.OnWXScrollListener;

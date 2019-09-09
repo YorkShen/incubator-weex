@@ -21,7 +21,7 @@ package org.apache.weex.adapter;
 import android.widget.ImageView;
 
 import org.apache.weex.common.WXImageStrategy;
-import org.apache.weex.dom.WXImageQuality;
+import com.taobao.weex.dom.WXImageQuality;
 
 /**
  * Interface for ImageLoader. This interface works as an adapter for various image library.

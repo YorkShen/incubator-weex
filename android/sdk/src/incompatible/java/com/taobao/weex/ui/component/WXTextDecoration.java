@@ -16,24 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.weex.common;
+package com.taobao.weex.ui.component;
 
-public enum WXRenderStrategy {
-  APPEND_ASYNC("APPEND_ASYNC"),
-  APPEND_ONCE("APPEND_ONCE"),
-  DATA_RENDER("DATA_RENDER"),
-  DATA_RENDER_BINARY("DATA_RENDER_BINARY"),
-  JSON_RENDER("JSON_RENDER");
-
-
-  private String flag;
-
-  WXRenderStrategy(String flag) {
-    this.flag = flag;
-  }
-
-  public String getFlag() {
-    return flag;
-  }
+public enum WXTextDecoration {
+  INVALID,
+  NONE,
+  UNDERLINE,
+  LINETHROUGH,
 }
-

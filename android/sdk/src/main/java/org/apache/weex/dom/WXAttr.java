@@ -20,9 +20,10 @@ package org.apache.weex.dom;
 
 import android.support.annotation.RestrictTo;
 import android.support.annotation.RestrictTo.Scope;
+import com.taobao.weex.dom.WXImageQuality;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.Constants.Name;
-import org.apache.weex.common.WXImageSharpen;
+import com.taobao.weex.common.WXImageSharpen;
 import org.apache.weex.dom.binding.ELUtils;
 import org.apache.weex.dom.binding.WXStatement;
 import org.apache.weex.el.parse.Parser;

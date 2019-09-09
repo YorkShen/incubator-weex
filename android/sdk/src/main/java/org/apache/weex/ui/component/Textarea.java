@@ -21,6 +21,7 @@ package org.apache.weex.ui.component;
 import android.text.TextUtils;
 import android.view.Gravity;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.ui.view.WXEditText;
 import org.apache.weex.WXSDKInstance;

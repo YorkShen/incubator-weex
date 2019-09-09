@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.taobao.weex.utils.LogLevel;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.performance.WXStateRecord;
 

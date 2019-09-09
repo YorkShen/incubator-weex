@@ -18,7 +18,7 @@
  */
 package org.apache.weex.ui.component.list.template.jni;
 
-import org.apache.weex.base.CalledByNative;
+import com.taobao.weex.base.CalledByNative;
 import org.apache.weex.ui.component.WXComponent;
 
 /**

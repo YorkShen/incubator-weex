@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Color;
 
 import android.support.annotation.NonNull;
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.WXSDKInstance;
 import com.taobao.weex.annotation.Component;

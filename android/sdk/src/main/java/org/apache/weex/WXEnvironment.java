@@ -33,7 +33,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import org.apache.weex.common.WXConfig;
 import org.apache.weex.utils.FontDO;
-import org.apache.weex.utils.LogLevel;
+import com.taobao.weex.utils.LogLevel;
 import org.apache.weex.utils.TypefaceUtil;
 import org.apache.weex.utils.WXFileUtils;
 import org.apache.weex.utils.WXLogUtils;

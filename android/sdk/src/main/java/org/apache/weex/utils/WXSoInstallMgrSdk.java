@@ -28,7 +28,7 @@ import org.apache.weex.IWXStatisticsListener;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.adapter.IWXSoLoaderAdapter;
 import org.apache.weex.adapter.IWXUserTrackAdapter;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import dalvik.system.PathClassLoader;
 import java.io.File;
 import java.io.FileOutputStream;

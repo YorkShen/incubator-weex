@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.ui.view.IWebView;
 import org.apache.weex.ui.view.WXWebView;

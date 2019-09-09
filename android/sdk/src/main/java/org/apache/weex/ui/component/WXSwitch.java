@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.common.Constants;
 import org.apache.weex.layout.ContentBoxMeasurement;
 import org.apache.weex.ui.view.WXSwitchView;

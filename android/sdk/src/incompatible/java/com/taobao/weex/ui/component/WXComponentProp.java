@@ -16,9 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.weex.common;
+package com.taobao.weex.ui.component;
 
-public enum WXImageSharpen {
-  UNSHARPEN,
-  SHARPEN
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface WXComponentProp {
+
+  String name();
 }

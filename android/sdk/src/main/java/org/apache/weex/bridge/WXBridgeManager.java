@@ -50,7 +50,7 @@ import org.apache.weex.common.WXException;
 import org.apache.weex.common.WXJSBridgeMsgType;
 import org.apache.weex.common.WXJSExceptionInfo;
 import org.apache.weex.common.WXRefreshData;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.common.WXRuntimeException;
 import org.apache.weex.common.WXThread;
 import org.apache.weex.dom.CSSShorthand.EDGE;
@@ -95,7 +95,7 @@ import org.apache.weex.adapter.IWXConfigAdapter;
 import org.apache.weex.adapter.IWXJsFileLoaderAdapter;
 import org.apache.weex.adapter.IWXJscProcessManager;
 import org.apache.weex.adapter.IWXUserTrackAdapter;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.component.WXComponent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -248,7 +248,7 @@ public class WXBridgeManager implements Callback, BactchExecutor {
   private Interceptor mInterceptor;
   private WXParams mInitParams;
 
-  private WXBridgeManager() {
+  protected WXBridgeManager() {
     initWXBridge(WXEnvironment.sRemoteDebugMode);
     mJSThread = new WXThread("WeexJSBridgeThread", this);
     mJSHandler = mJSThread.getHandler();

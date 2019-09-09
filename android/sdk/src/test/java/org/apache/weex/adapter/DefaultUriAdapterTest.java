@@ -25,7 +25,7 @@ import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKInstanceTest;
 import org.apache.weex.WXSDKManager;
 import org.apache.weex.WXSDKManagerTest;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.common.WXRequest;
 import com.taobao.weappplus_sdk.BuildConfig;
 

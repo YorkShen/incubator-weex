@@ -26,7 +26,7 @@ import java.util.List;
 import android.util.Log;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.bridge.WXBridgeManager;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.ui.component.WXComponent;
 import org.json.JSONObject;
 

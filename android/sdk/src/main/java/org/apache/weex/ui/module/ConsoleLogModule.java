@@ -24,7 +24,7 @@ import android.text.TextUtils;
 
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.WXModule;
-import org.apache.weex.utils.LogLevel;
+import com.taobao.weex.utils.LogLevel;
 import org.apache.weex.WXEnvironment;
 import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.WXBridgeManager;

@@ -27,13 +27,14 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.taobao.weex.ui.component.WXComponentProp;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKInstance.OnInstanceVisibleListener;
 import com.taobao.weex.annotation.Component;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.OnWXScrollListener;
-import org.apache.weex.common.WXRenderStrategy;
+import com.taobao.weex.common.WXRenderStrategy;
 import org.apache.weex.instance.InstanceOnFireEventInterceptor;
 import org.apache.weex.performance.WXInstanceApm;
 import org.apache.weex.ui.action.BasicComponentData;
@@ -42,7 +43,7 @@ import org.apache.weex.utils.WXUtils;
 import org.apache.weex.utils.WXViewUtils;
 import org.apache.weex.R;
 import org.apache.weex.IWXRenderListener;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 
 import java.util.ArrayDeque;
 import java.util.Comparator;

@@ -29,7 +29,7 @@ import android.text.TextUtils;
 import org.apache.weex.common.Constants;
 import org.apache.weex.dom.binding.ELUtils;
 import org.apache.weex.ui.component.WXText;
-import org.apache.weex.ui.component.WXTextDecoration;
+import com.taobao.weex.ui.component.WXTextDecoration;
 import org.apache.weex.utils.WXUtils;
 import org.apache.weex.utils.WXViewUtils;
 import java.util.Collection;

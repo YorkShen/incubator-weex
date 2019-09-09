@@ -27,7 +27,7 @@ import android.graphics.drawable.Drawable;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import org.apache.weex.common.Constants;
-import org.apache.weex.common.WXImageSharpen;
+import com.taobao.weex.common.WXImageSharpen;
 import org.apache.weex.ui.view.WXImageView;
 import com.taobao.weappplus_sdk.BuildConfig;
 import org.apache.weex.TestActivity;

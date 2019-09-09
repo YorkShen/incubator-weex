@@ -29,7 +29,7 @@ import android.view.View;
 
 import org.apache.weex.common.Constants;
 import org.apache.weex.WXEnvironment;
-import org.apache.weex.common.WXErrorCode;
+import com.taobao.weex.common.WXErrorCode;
 import org.apache.weex.utils.FunctionParser;
 import org.apache.weex.utils.WXDataStructureUtil;
 import org.apache.weex.utils.WXExceptionUtils;

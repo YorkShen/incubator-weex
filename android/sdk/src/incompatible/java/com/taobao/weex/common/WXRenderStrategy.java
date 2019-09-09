@@ -16,17 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.weex.dom;
+package com.taobao.weex.common;
 
-public enum WXImageQuality {
+public enum WXRenderStrategy {
+  APPEND_ASYNC("APPEND_ASYNC"),
+  APPEND_ONCE("APPEND_ONCE"),
+  DATA_RENDER("DATA_RENDER"),
+  DATA_RENDER_BINARY("DATA_RENDER_BINARY"),
+  JSON_RENDER("JSON_RENDER");
 
-  ORIGINAL,
 
-  LOW,
+  private String flag;
 
-  NORMAL,
+  WXRenderStrategy(String flag) {
+    this.flag = flag;
+  }
 
-  HIGH,
-
-  AUTO
+  public String getFlag() {
+    return flag;
+  }
 }
+
