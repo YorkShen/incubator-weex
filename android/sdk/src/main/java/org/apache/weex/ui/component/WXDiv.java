@@ -26,7 +26,7 @@ import org.apache.weex.ui.flat.WidgetContainer;
 import org.apache.weex.ui.flat.widget.WidgetGroup;
 import org.apache.weex.ui.view.WXFrameLayout;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.ComponentCreator;
 import org.apache.weex.ui.action.BasicComponentData;
 

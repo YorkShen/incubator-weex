@@ -32,7 +32,7 @@ import org.apache.weex.ui.flat.widget.TextWidget;
 import org.apache.weex.ui.view.WXTextView;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.bridge.WXBridgeManager;
 import org.apache.weex.ui.ComponentCreator;
 import org.apache.weex.ui.action.BasicComponentData;

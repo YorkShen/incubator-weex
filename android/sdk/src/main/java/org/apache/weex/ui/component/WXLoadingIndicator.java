@@ -24,7 +24,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import org.apache.weex.common.Constants;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.ui.view.refresh.circlebar.CircleProgressBar;
 import org.apache.weex.utils.WXResourceUtils;

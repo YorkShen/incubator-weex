@@ -27,7 +27,7 @@ import org.apache.weex.common.Constants;
 import org.apache.weex.layout.ContentBoxMeasurement;
 import org.apache.weex.ui.view.WXSwitchView;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.utils.WXUtils;

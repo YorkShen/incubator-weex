@@ -19,7 +19,7 @@
 package org.apache.weex;
 
 import org.apache.weex.common.WXModule;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 
 import java.util.Map;
 

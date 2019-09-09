@@ -26,7 +26,7 @@ import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.utils.WXLogUtils;

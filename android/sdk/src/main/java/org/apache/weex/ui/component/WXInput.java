@@ -20,7 +20,7 @@ package org.apache.weex.ui.component;
 
 import org.apache.weex.ui.view.WXEditText;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 
 /**

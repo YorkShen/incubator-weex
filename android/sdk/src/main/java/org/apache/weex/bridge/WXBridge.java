@@ -27,7 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.base.CalledByNative;
 import org.apache.weex.common.IWXBridge;
 import org.apache.weex.common.WXErrorCode;

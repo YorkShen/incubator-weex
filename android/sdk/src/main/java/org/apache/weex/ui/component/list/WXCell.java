@@ -29,7 +29,7 @@ import android.widget.FrameLayout;
 
 import org.apache.weex.ui.view.WXFrameLayout;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.common.Constants;
 import org.apache.weex.dom.WXAttr;
 import org.apache.weex.performance.WXInstanceApm;

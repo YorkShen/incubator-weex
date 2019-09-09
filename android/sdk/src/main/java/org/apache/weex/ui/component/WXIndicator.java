@@ -29,7 +29,7 @@ import org.apache.weex.common.WXRuntimeException;
 import org.apache.weex.ui.view.WXCircleIndicator;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.utils.WXResourceUtils;
 import org.apache.weex.utils.WXUtils;

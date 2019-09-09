@@ -22,7 +22,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import org.apache.weex.ui.view.WXFrameLayout;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 
 /**

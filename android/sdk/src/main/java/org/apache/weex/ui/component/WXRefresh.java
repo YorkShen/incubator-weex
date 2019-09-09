@@ -27,7 +27,7 @@ import org.apache.weex.ui.component.list.WXListComponent;
 import org.apache.weex.ui.view.WXFrameLayout;
 import org.apache.weex.ui.view.WXRefreshLayout;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.ui.view.refresh.core.WXSwipeLayout;
 import org.apache.weex.ui.view.refresh.wrapper.BaseBounceView;

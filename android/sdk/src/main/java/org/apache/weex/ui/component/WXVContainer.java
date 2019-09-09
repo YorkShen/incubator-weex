@@ -31,7 +31,7 @@ import android.view.ViewParent;
 import org.apache.weex.common.Constants;
 import org.apache.weex.ui.view.WXImageView;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.dom.CSSShorthand;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.utils.WXLogUtils;

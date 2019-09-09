@@ -28,7 +28,7 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.WXModule;

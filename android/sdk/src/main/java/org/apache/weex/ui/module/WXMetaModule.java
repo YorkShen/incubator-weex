@@ -34,7 +34,7 @@ import org.apache.weex.utils.WXViewUtils;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 
 import java.net.URLDecoder;
 import java.util.HashMap;

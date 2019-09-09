@@ -28,7 +28,7 @@ import android.text.TextUtils;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.WXEnvironment;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 
 import java.util.Arrays;
 import java.util.List;

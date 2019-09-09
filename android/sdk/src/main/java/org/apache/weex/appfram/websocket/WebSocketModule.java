@@ -20,7 +20,7 @@ package org.apache.weex.appfram.websocket;
 
 import android.os.Looper;
 
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.WXSDKEngine;

@@ -34,7 +34,7 @@ import org.apache.weex.ui.view.WXVideoView;
 import org.apache.weex.ui.view.WXVideoView.Wrapper;
 import org.apache.weex.utils.WXUtils;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.adapter.URIAdapter;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.utils.WXLogUtils;

@@ -23,7 +23,7 @@ import android.text.TextUtils;
 
 import org.apache.weex.WXSDKEngine;
 import org.apache.weex.WXSDKEngine.DestroyableModule;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.JSCallback;
 
 import java.util.Map;

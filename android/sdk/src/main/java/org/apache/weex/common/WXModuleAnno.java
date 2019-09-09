@@ -18,7 +18,7 @@
  */
 package org.apache.weex.common;
 
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

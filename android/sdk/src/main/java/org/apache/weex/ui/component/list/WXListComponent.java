@@ -26,7 +26,7 @@ import android.support.v7.widget.PagerSnapHelper;
 import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.WXErrorCode;
 import org.apache.weex.common.WXThread;

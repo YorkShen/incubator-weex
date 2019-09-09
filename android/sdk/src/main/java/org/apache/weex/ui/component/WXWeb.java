@@ -29,9 +29,9 @@ import org.apache.weex.ui.view.IWebView;
 import org.apache.weex.ui.view.WXWebView;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.adapter.URIAdapter;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.ui.action.BasicComponentData;
 import org.apache.weex.utils.WXUtils;
 

@@ -32,7 +32,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.utils.WXLogUtils;
 import org.apache.weex.WXSDKEngine;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import java.util.HashMap;
 import java.util.Map;
 

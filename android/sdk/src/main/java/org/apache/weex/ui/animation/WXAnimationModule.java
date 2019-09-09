@@ -24,7 +24,7 @@ import android.text.TextUtils;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.ui.action.GraphicActionAnimation;
 import org.apache.weex.ui.component.WXComponent;
 

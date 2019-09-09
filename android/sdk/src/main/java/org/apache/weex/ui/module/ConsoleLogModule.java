@@ -26,7 +26,7 @@ import org.apache.weex.bridge.JSCallback;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.utils.LogLevel;
 import org.apache.weex.WXEnvironment;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.WXBridgeManager;
 import java.util.Map;
 

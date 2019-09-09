@@ -47,7 +47,7 @@ import org.apache.weex.layout.MeasureMode;
 import org.apache.weex.ui.view.WXEditText;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.WXBridgeManager;
 import org.apache.weex.dom.CSSConstants;
 import org.apache.weex.dom.WXStyle;

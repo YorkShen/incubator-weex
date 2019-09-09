@@ -19,7 +19,7 @@
 package org.apache.weex.common;
 
 import org.apache.weex.WXEnvironment;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.Invoker;
 import org.apache.weex.bridge.MethodInvoker;
 import org.apache.weex.bridge.ModuleFactory;

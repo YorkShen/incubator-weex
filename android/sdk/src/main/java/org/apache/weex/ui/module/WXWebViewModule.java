@@ -21,7 +21,7 @@ package org.apache.weex.ui.module;
 import org.apache.weex.common.WXModule;
 import org.apache.weex.ui.component.WXWeb;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.ui.component.WXComponent;
 
 public class WXWebViewModule extends WXModule {

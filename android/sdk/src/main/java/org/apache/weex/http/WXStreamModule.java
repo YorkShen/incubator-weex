@@ -33,7 +33,7 @@ import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
 import org.apache.weex.adapter.IWXHttpAdapter;
 import org.apache.weex.adapter.URIAdapter;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.bridge.WXBridgeManager;
 import org.apache.weex.performance.WXStateRecord;
 import java.io.UnsupportedEncodingException;

@@ -39,7 +39,7 @@ import org.apache.weex.ui.view.WXCircleViewPager;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.dom.WXEvent;
 import org.apache.weex.ui.ComponentCreator;
 import org.apache.weex.ui.action.BasicComponentData;

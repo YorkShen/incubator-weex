@@ -24,7 +24,7 @@ import android.view.Menu;
 
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKManager;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.ui.component.WXComponent;
 import org.apache.weex.utils.WXUtils;
 

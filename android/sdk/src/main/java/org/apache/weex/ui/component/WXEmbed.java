@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
 import org.apache.weex.WXSDKInstance.OnInstanceVisibleListener;
-import org.apache.weex.annotation.Component;
+import com.taobao.weex.annotation.Component;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.OnWXScrollListener;
 import org.apache.weex.common.WXRenderStrategy;

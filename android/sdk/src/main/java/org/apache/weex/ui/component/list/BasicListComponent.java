@@ -46,7 +46,7 @@ import android.widget.LinearLayout;
 
 import org.apache.weex.WXEnvironment;
 import org.apache.weex.WXSDKInstance;
-import org.apache.weex.annotation.JSMethod;
+import com.taobao.weex.annotation.JSMethod;
 import org.apache.weex.common.Constants;
 import org.apache.weex.common.ICheckBindingScroller;
 import org.apache.weex.common.OnWXScrollListener;
