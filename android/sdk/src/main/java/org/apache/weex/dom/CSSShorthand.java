@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 public class CSSShorthand<T extends Enum<? extends CSSProperty>> implements Cloneable {
 
-  interface CSSProperty{
+  public interface CSSProperty{
   }
 
   public static enum EDGE implements CSSProperty{

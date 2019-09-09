@@ -119,7 +119,7 @@ public class ImageDrawable extends PaintDrawable {
   private int bitmapHeight;
   private int bitmapWidth;
 
-  private ImageDrawable() {
+  protected ImageDrawable() {
 
   }
 

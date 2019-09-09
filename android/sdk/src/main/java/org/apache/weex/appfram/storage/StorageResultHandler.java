@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class StorageResultHandler {
 
-    private StorageResultHandler() {
+    protected StorageResultHandler() {
     }
 
     private static final String RESULT = "result";

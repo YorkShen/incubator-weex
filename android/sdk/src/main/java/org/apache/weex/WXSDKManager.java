@@ -112,11 +112,11 @@ public class WXSDKManager {
 
   private static final int DEFAULT_VIEWPORT_WIDTH = 750;
 
-  private WXSDKManager() {
+  protected WXSDKManager() {
     this(new WXRenderManager());
   }
 
-  private WXSDKManager(WXRenderManager renderManager) {
+  protected WXSDKManager(WXRenderManager renderManager) {
     mWXRenderManager = renderManager;
     mBridgeManager = WXBridgeManager.getInstance();
     mWXWorkThreadManager = new WXWorkThreadManager();

@@ -48,7 +48,7 @@ public class RegisterCache {
         return registerCache;
     }
 
-    private RegisterCache() {
+    protected RegisterCache() {
 
     }
 

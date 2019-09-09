@@ -25,7 +25,7 @@ import java.lang.reflect.Proxy;
 
 public class WXInterception {
 
-  private WXInterception() {
+  protected WXInterception() {
   }
 
   @SuppressWarnings("unchecked")

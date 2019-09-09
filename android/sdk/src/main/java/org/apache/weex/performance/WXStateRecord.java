@@ -52,7 +52,7 @@ public class WXStateRecord {
         return SingleTonHolder.S_INSTANCE;
     }
 
-    private WXStateRecord() {
+    protected WXStateRecord() {
         mExceptionHistory = new RecordList<>(10);
         mActionHistory = new RecordList<>(20);
         mJsfmInitHistory = new RecordList<>(10);
